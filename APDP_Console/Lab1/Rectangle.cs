@@ -1,3 +1,5 @@
+namespace APDP.Lab1;
+
 public class Rectangle : Shape
 {
     public Rectangle(double length, double width)
@@ -10,7 +12,6 @@ public class Rectangle : Shape
 
     public double Width { get; set; }
 
-    // Implement the abstract method from the base class
     public override double Area()
     {
         return Length * Width;

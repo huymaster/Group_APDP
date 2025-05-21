@@ -1,13 +1,14 @@
+namespace APDP.Lab1;
+
 public class Person
 {
-    // Private fields are used to store the data
-    private string name;
     private int age;
 
-    // Public properties provide controlled access to the private fields
+    private string name;
+
     public string Name
     {
-        get { return name; }
+        get => name;
         set
         {
             if (!string.IsNullOrEmpty(value))
@@ -17,7 +18,7 @@ public class Person
 
     public int Age
     {
-        get { return age; }
+        get => age;
         set
         {
             if (value >= 0)
@@ -25,7 +26,6 @@ public class Person
         }
     }
 
-    // Public method to introduce the person
     public void Introduce()
     {
         Console.WriteLine($"Hello, my name is {Name}, and I am {Age} years old.");

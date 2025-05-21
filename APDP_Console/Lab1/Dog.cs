@@ -1,13 +1,14 @@
-    class Dog : Animal
-{
-    public string Breed { get; set; }
+namespace APDP.Lab1;
 
+public class Dog : Animal
+{
     public Dog(string name, int age, string breed) : base(name, age)
     {
         Breed = breed;
     }
 
-    // Override the MakeSound method with a specific implementation
+    public string Breed { get; set; }
+
     public override void MakeSound()
     {
         Console.WriteLine("Bark, bark!");
