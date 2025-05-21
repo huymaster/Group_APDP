@@ -5,14 +5,14 @@ public class DVD(
     string author,
     DateTime publicationDate,
     bool isAvailable,
-    int lengthInSecond
+    int lengthInMinute
 ) : LibraryItem
 {
     protected sealed override string Title { get; set; } = title;
     protected sealed override string Author { get; set; } = author;
     protected sealed override DateTime PublicationDate { get; set; } = publicationDate;
     protected sealed override bool IsAvailable { get; set; } = isAvailable;
-    protected int LengthInSecond { get; set; } = lengthInSecond;
+    protected int LengthInMinute { get; set; } = lengthInMinute;
 
     public override string getTitle()
     {
@@ -36,6 +36,6 @@ public class DVD(
 
     public int getLengthInSecond()
     {
-        return LengthInSecond;
+        return LengthInMinute;
     }
 }

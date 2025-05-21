@@ -9,12 +9,17 @@ public class LibraryCatalog
         items.Add(item);
     }
 
-    public void FindItem(string searchQuery)
+    public LibraryItem? FindItem(string searchQuery)
     {
         var foundItems = items.Where(item =>
             item.getTitle().Contains(searchQuery) || item.getAuthor().Contains(searchQuery));
 
-        foreach (var item in foundItems)
+        return foundItems.FirstOrDefault();
+    }
+
+    public void PrintAllItems()
+    {
+        foreach (var item in items)
             Console.WriteLine($"{item.getTitle()} by {item.getAuthor()}. Available: {item.isAvailable()}");
     }
 }
