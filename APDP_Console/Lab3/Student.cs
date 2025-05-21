@@ -1,13 +1,10 @@
 namespace APDP.Lab3;
 
-namespace APDP.Lab3
+public class Student(string firstName, string lastName, DateTime? dateOfBirth = null)
 {
-    public class Student
-    {
-        public int StudentID { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public DateTime? DateOfBirth { get; set; }
-        public DateTime EnrollmentDate { get; set; } = DateTime.Now;
-    }
+    public int StudentID { get; set; }
+    public string FirstName { get; set; } = firstName;
+    public string LastName { get; set; } = lastName;
+    public DateTime? DateOfBirth { get; set; } = dateOfBirth;
+    public DateTime EnrollmentDate { get; set; } = DateTime.Now;
 }
