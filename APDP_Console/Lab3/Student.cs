@@ -1,3 +1,5 @@
+namespace APDP.Lab3;
+
 namespace APDP.Lab3
 {
     public class Student
