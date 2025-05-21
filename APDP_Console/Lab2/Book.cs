@@ -14,22 +14,22 @@ public class Book(
     protected sealed override bool IsAvailable { get; set; } = isAvailable;
     protected string Genre { get; } = genre;
 
-    public string getTitle()
+    public override string getTitle()
     {
         return Title;
     }
 
-    public string getAuthor()
+    public override string getAuthor()
     {
         return Author;
     }
 
-    public DateTime getPublicationDate()
+    public override DateTime getPublicationDate()
     {
         return PublicationDate;
     }
 
-    public bool isAvailable()
+    public override bool isAvailable()
     {
         return IsAvailable;
     }

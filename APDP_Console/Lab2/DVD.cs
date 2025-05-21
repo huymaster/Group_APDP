@@ -14,22 +14,22 @@ public class DVD(
     protected sealed override bool IsAvailable { get; set; } = isAvailable;
     protected int LengthInSecond { get; set; } = lengthInSecond;
 
-    public string getTitle()
+    public override string getTitle()
     {
         return Title;
     }
 
-    public string getAuthor()
+    public override string getAuthor()
     {
         return Author;
     }
 
-    public DateTime getPublicationDate()
+    public override DateTime getPublicationDate()
     {
         return PublicationDate;
     }
 
-    public bool isAvailable()
+    public override bool isAvailable()
     {
         return IsAvailable;
     }
