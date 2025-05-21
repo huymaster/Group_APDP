@@ -8,8 +8,4 @@
         <RootNamespace>APDP</RootNamespace>
     </PropertyGroup>
 
-    <ItemGroup>
-        <Folder Include="Lab2\"/>
-    </ItemGroup>
-
 </Project>
