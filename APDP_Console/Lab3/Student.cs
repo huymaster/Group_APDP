@@ -17,4 +17,5 @@ public class Student
     public string LastName { get; private set; }
     public DateTime? DateOfBirth { get; private set; }
     public DateTime EnrollmentDate { get; private set; } = DateTime.Now;
+    public void test() { }
 }
