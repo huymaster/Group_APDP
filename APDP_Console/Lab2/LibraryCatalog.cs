@@ -1,31 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+namespace APDP.Lab2;
 
-namespace APDP.Lab2
+public class LibraryCatalog
 {
-    public class LibraryCatalog
+    private readonly List<LibraryItem> items = [];
+
+    public void AddItem(LibraryItem item)
     {
-        private List<LibraryItem> items;
+        items.Add(item);
+    }
 
-        public LibraryCatalog()
-        {
-            items = new List<LibraryItem>();
-        }
+    public void FindItem(string searchQuery)
+    {
+        var foundItems = items.Where(item =>
+            item.getTitle().Contains(searchQuery) || item.getAuthor().Contains(searchQuery));
 
-        public void AddItem(LibraryItem item)
-        {
-            items.Add(item);
-        }
-
-        public void FindItem(string searchQuery)
-        {
-            var foundItems = items.Where(item => item.getTitle().Contains(searchQuery) || item.getAuthor().Contains(searchQuery));
-
-            foreach (var item in foundItems)
-            {
-                Console.WriteLine($"{item.getTitle()} by {item.getAuthor()}. Available: {item.isAvailable()}");
-            }
-        }
+        foreach (var item in foundItems)
+            Console.WriteLine($"{item.getTitle()} by {item.getAuthor()}. Available: {item.isAvailable()}");
     }
 }
