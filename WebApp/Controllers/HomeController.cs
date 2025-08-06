@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Data;
 
@@ -14,7 +13,6 @@ public class HomeController(ILogger<HomeController> logger, ApplicationDbContext
         return View();
     }
 
-    [Authorize]
     public IActionResult Privacy()
     {
         return View();

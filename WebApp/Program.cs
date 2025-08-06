@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Core;
 using WebApp.Data;
+using WebApp.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -12,7 +13,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         .UseSnakeCaseNamingConvention()
 );
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => { options.SignIn.RequireConfirmedAccount = true; })
+builder.Services.AddIdentity<User, UserRole>(options => { options.SignIn.RequireConfirmedAccount = true; })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultUI()
     .AddDefaultTokenProviders();
@@ -41,6 +42,11 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateAsyncScope())
+{
+    await SeedData.Initialize(scope.ServiceProvider);
+}
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
