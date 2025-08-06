@@ -1,0 +1,39 @@
+﻿@model Exception?
+
+@{
+    var stackTrace = "";
+    var exception = Model;
+    while (exception != null)
+    {
+        stackTrace += exception.GetType().Name + ": " +
+                      exception.Message +
+                      Environment.NewLine +
+                      (exception.StackTrace ?? "---empty stack trace---") +
+                      Environment.NewLine +
+                      Environment.NewLine;
+        exception = exception.InnerException;
+    }
+}
+
+<div class="container align-content-center">
+    <div class="row">
+        <div class="col">
+            <div class="card text-center">
+                <div class="card-header">
+                    <h1>500</h1>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Internal Server Error</h5>
+                    <p class="card-text">Something went wrong on the server.</p>
+                    @if (Model != null)
+                    {
+                        <div class="container align-content-start align-self-start w-100">
+                            <pre><code class="d-block w-100 text-start overflow-auto border-1 border-danger
+                                p-2">@stackTrace</code></pre>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
