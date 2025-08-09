@@ -8,15 +8,23 @@ using WebApp.Models;
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContext<ApplicationIdentityDbContext>(options =>
+    options.UseNpgsql(connectionString)
+        .UseSnakeCaseNamingConvention()
+);
+builder.Services.AddDbContext<PSQLDbContext>(options =>
     options.UseNpgsql(connectionString)
         .UseSnakeCaseNamingConvention()
 );
 
 builder.Services.AddIdentity<User, UserRole>(options => { options.SignIn.RequireConfirmedAccount = true; })
-    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddEntityFrameworkStores<ApplicationIdentityDbContext>()
     .AddDefaultUI()
     .AddDefaultTokenProviders();
+
+builder.Services.AddMemoryCache();
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization(PolicyDefinition.ConfigurePolicies);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -43,7 +51,7 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateAsyncScope())
+await using (var scope = app.Services.CreateAsyncScope())
 {
     await SeedData.Initialize(scope.ServiceProvider);
 }
@@ -52,11 +60,13 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseExceptionHandler("/Error/InternalServerError");
 app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllerRoute(
     "default",
     "{controller=Home}/{action=Index}/{id?}"
 );
+app.UseMiddleware<Compressor>();
 
 app.MapRazorPages();
 app.Run();

@@ -4,7 +4,8 @@ using WebApp.Models;
 
 namespace WebApp.Data;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+public class ApplicationIdentityDbContext(
+    DbContextOptions<ApplicationIdentityDbContext> options)
     : IdentityDbContext<User, UserRole, string>(options)
 {
 }

@@ -1,0 +1,26 @@
+﻿openapi: 3.1.0
+info:
+  title: Title
+  description: Title
+  version: 1.0.0
+servers:
+  - url: 'https://studentmanager.ddns.net/'
+paths:
+  /.well-known/acme-challenge/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      description: ACME API
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type:
+                  - string
+  
