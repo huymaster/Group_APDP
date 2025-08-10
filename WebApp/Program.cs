@@ -12,6 +12,7 @@ builder.Services.AddDbContext<ApplicationIdentityDbContext>(options =>
     options.UseNpgsql(connectionString)
         .UseSnakeCaseNamingConvention()
 );
+
 builder.Services.AddDbContext<PSQLDbContext>(options =>
     options.UseNpgsql(connectionString)
         .UseSnakeCaseNamingConvention()
