@@ -14,6 +14,11 @@ public class PSQLDbContext(
     {
         logger.LogInformation("Creating model");
         base.OnModelCreating(modelBuilder);
+        CreateTables(modelBuilder);
         logger.LogInformation("Model created");
+    }
+
+    private static void CreateTables(ModelBuilder builder)
+    {
     }
 }

@@ -1,6 +1,8 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
+@inject IAuthorizationService AuthorizationService
 
 <!DOCTYPE html>
 <html lang="en">
@@ -66,7 +68,7 @@
 </div>
 <footer class="border-top footer text-muted">
     <div class="container">
-        &copy; 2025 - Student Management System - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        &copy; 2025 - Student Management System
     </div>
 </footer>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>

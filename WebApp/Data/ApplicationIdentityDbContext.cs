@@ -5,7 +5,7 @@ using WebApp.Models;
 namespace WebApp.Data;
 
 public class ApplicationIdentityDbContext(
-    DbContextOptions<ApplicationIdentityDbContext> options)
-    : IdentityDbContext<User, UserRole, string>(options)
+    DbContextOptions<ApplicationIdentityDbContext> options
+) : IdentityDbContext<User, UserRole, string>(options)
 {
 }

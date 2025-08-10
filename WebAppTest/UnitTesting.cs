@@ -1,19 +1,20 @@
-using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
-using Xunit.Abstractions;
 
 namespace WebAppTest;
 
-public class UnitTesting(PSQLFixture fixture, ITestOutputHelper helper) : IClassFixture<PSQLFixture>
+public class UnitTesting(PSQLFixture fixture) : IClassFixture<PSQLFixture>
 {
     [Fact]
-    public void TestGetDB()
+    public void TestPSQLConnect()
     {
-        var connectionString = fixture.GetConnectionString();
-        helper.WriteLine(connectionString);
-        var optionsBuilder = new DbContextOptionsBuilder<PSQLDbContext>();
-        optionsBuilder.UseNpgsql(connectionString);
-        using var context = new PSQLDbContext(optionsBuilder.Options);
-        helper.WriteLine(context.ToString());
+        using var context = new PSQLDbContext(fixture.GetTestDbOptions<PSQLDbContext>());
+        Assert.NotNull(context);
+    }
+
+    [Fact]
+    public void TestIdentityConnect()
+    {
+        using var context = new ApplicationIdentityDbContext(fixture.GetTestDbOptions<ApplicationIdentityDbContext>());
+        Assert.NotNull(context);
     }
 }
