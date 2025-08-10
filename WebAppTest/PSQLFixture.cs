@@ -28,6 +28,7 @@ public class PSQLFixture : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
+        await _container.StopAsync();
         await _container.DisposeAsync();
     }
 
