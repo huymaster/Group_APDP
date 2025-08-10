@@ -57,6 +57,17 @@ await using (var scope = app.Services.CreateAsyncScope())
     await SeedData.Initialize(scope.ServiceProvider);
 }
 
+await using (var psqlDbContext = app.Services.CreateScope().ServiceProvider.GetRequiredService<PSQLDbContext>())
+{
+    await psqlDbContext.Database.MigrateAsync();
+}
+
+await using (var identityDbContext =
+             app.Services.CreateScope().ServiceProvider.GetRequiredService<ApplicationIdentityDbContext>())
+{
+    await identityDbContext.Database.MigrateAsync();
+}
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseExceptionHandler("/Error/InternalServerError");

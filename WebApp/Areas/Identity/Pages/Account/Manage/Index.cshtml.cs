@@ -4,114 +4,158 @@
 #nullable disable
 
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebApp.Models;
 
-namespace WebApp.Areas.Identity.Pages.Account.Manage
+namespace WebApp.Areas.Identity.Pages.Account.Manage;
+
+public class IndexModel : PageModel
 {
-    public class IndexModel : PageModel
+    private readonly SignInManager<User> _signInManager;
+    private readonly UserManager<User> _userManager;
+
+    public IndexModel(
+        UserManager<User> userManager,
+        SignInManager<User> signInManager)
     {
-        private readonly SignInManager<User> _signInManager;
-        private readonly UserManager<User> _userManager;
+        _userManager = userManager;
+        _signInManager = signInManager;
+    }
 
-        public IndexModel(
-            UserManager<User> userManager,
-            SignInManager<User> signInManager)
+    public string Username { get; set; }
+
+    [TempData] public string StatusMessage { get; set; }
+
+    [BindProperty] public InputModel Input { get; set; }
+
+    private async Task LoadAsync(User user)
+    {
+        var userName = await _userManager.GetUserNameAsync(user);
+        var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+
+        Username = userName;
+
+        Input = new InputModel
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-        }
+            PhoneNumber = phoneNumber,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            DateOfBirth = user.BirthDate == default ? DateOnly.FromDateTime(DateTime.Today) : user.BirthDate
+        };
+    }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public string Username { get; set; }
+    public async Task<IActionResult> OnGetAsync()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null) return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        [TempData]
-        public string StatusMessage { get; set; }
+        await LoadAsync(user);
+        return Page();
+    }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        [BindProperty]
-        public InputModel Input { get; set; }
+    public async Task<IActionResult> OnPostAsync()
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null) return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 
-        private async Task LoadAsync(User user)
+        if (!ModelState.IsValid)
         {
-            var userName = await _userManager.GetUserNameAsync(user);
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-
-            Username = userName;
-
-            Input = new InputModel
-            {
-                PhoneNumber = phoneNumber
-            };
-        }
-
-        public async Task<IActionResult> OnGetAsync()
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-
             await LoadAsync(user);
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+        if (Input.PhoneNumber != phoneNumber)
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
+            var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
+            if (!setPhoneResult.Succeeded)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                StatusMessage = "Unexpected error when trying to set phone number.";
+                return RedirectToPage();
             }
-
-            if (!ModelState.IsValid)
-            {
-                await LoadAsync(user);
-                return Page();
-            }
-
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            if (Input.PhoneNumber != phoneNumber)
-            {
-                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
-                if (!setPhoneResult.Succeeded)
-                {
-                    StatusMessage = "Unexpected error when trying to set phone number.";
-                    return RedirectToPage();
-                }
-            }
-
-            await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your profile has been updated";
-            return RedirectToPage();
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public class InputModel
+        if (Input.FirstName != user.FirstName)
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
-            [Phone]
-            [Display(Name = "Phone number")]
-            public string PhoneNumber { get; set; }
+            user.FirstName = Input.FirstName;
+            var setFirstNameResult = await _userManager.UpdateAsync(user);
+            if (!setFirstNameResult.Succeeded)
+            {
+                StatusMessage = "Unexpected error when trying to set first name.";
+                return RedirectToPage();
+            }
+        }
+
+        if (Input.LastName != user.LastName)
+        {
+            user.LastName = Input.LastName;
+            var setLastNameResult = await _userManager.UpdateAsync(user);
+            if (!setLastNameResult.Succeeded)
+            {
+                StatusMessage = "Unexpected error when trying to set last name.";
+                return RedirectToPage();
+            }
+        }
+
+        if (Input.DateOfBirth != user.BirthDate)
+        {
+            user.BirthDate = Input.DateOfBirth;
+            var setDateResult = await _userManager.UpdateAsync(user);
+            if (!setDateResult.Succeeded)
+            {
+                StatusMessage = "Unexpected error when trying to set date of birth.";
+                return RedirectToPage();
+            }
+        }
+
+        await _signInManager.RefreshSignInAsync(user);
+        StatusMessage = "Your profile has been updated";
+        return RedirectToPage();
+    }
+
+    public class InputModel
+    {
+        [Phone]
+        [Display(Name = "Phone number")]
+        public string PhoneNumber { get; set; }
+
+        [Display(Name = "First name")] public string FirstName { get; set; }
+
+        [Display(Name = "Last name")] public string LastName { get; set; }
+
+        [DataType(DataType.Date)]
+        [Display(Name = "Date of birth")]
+        [Age]
+        public DateOnly DateOfBirth { get; set; }
+    }
+
+    internal class AgeAttribute : ValidationAttribute
+    {
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            if (value is not DateOnly dateValue) return ValidationResult.Success;
+            if (dateValue > DateOnly.FromDateTime(DateTime.Today))
+                return new ValidationResult(ErrorMessage ?? "Date of birth must not be in the future.");
+            if (dateValue < DateOnly.FromDateTime(DateTime.Today.AddYears(-100)))
+                return new ValidationResult(ErrorMessage ?? "Date of birth must not be older than 100 years.");
+            return ValidationResult.Success;
+        }
+    }
+
+    internal class PhoneAttribute : ValidationAttribute
+    {
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            var pattern = @"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$";
+            if (value is not string phoneNumber) return ValidationResult.Success;
+            if (phoneNumber.Length != 10)
+                return new ValidationResult("Phone number must be 10 digits long.");
+            return !Regex.IsMatch(phoneNumber, pattern)
+                ? new ValidationResult("Phone number is not valid.")
+                : ValidationResult.Success;
         }
     }
 }
