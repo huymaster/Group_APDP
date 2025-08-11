@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebApp.Core;
 using WebApp.Data;
 
@@ -19,5 +20,12 @@ public class HomeController(ILogger<HomeController> logger, ApplicationIdentityD
     public IActionResult Privacy()
     {
         return View();
+    }
+
+    [Authorize(Policy = Policies.ManagerOnly)]
+    public async Task<IActionResult> UserList()
+    {
+        var users = await context.Users.ToListAsync();
+        return View(users);
     }
 }

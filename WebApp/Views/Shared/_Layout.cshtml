@@ -1,8 +1,29 @@
-﻿@using Microsoft.AspNetCore.Authorization
+﻿@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
 @inject IAuthorizationService AuthorizationService
+
+@{
+    var welcome = "Hello";
+    var name = string.Empty;
+    var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (id != null)
+    {
+        var user = await UserManager.FindByIdAsync(id);
+        if (user is { } u)
+        {
+            name = u.FullName ?? "<unknown>";
+            if (DateTime.Now.Month == u.BirthDate.Month && DateTime.Now.Day == u.BirthDate.Day)
+                welcome = "Happy Birthday";
+        }
+        else
+        {
+            name = "<unknown>";
+        }
+    }
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -31,6 +52,9 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="UserList">Users</a>
+                    </li>
                 </ul>
 
                 <ul class="navbar-nav">
@@ -38,7 +62,7 @@
                     {
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index"
-                               title="Manage">Hello @User.Identity?.Name!</a>
+                               title="Manage">@welcome, @name</a>
                         </li>
                         <li class="nav-item">
                             <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout"

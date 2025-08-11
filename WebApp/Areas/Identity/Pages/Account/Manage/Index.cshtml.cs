@@ -41,8 +41,7 @@ public class IndexModel : PageModel
         Input = new InputModel
         {
             PhoneNumber = phoneNumber,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
+            FullName = user.FullName,
             DateOfBirth = user.BirthDate == default ? DateOnly.FromDateTime(DateTime.Today) : user.BirthDate
         };
     }
@@ -78,24 +77,13 @@ public class IndexModel : PageModel
             }
         }
 
-        if (Input.FirstName != user.FirstName)
+        if (Input.FullName != user.FullName)
         {
-            user.FirstName = Input.FirstName;
+            user.FullName = Input.FullName;
             var setFirstNameResult = await _userManager.UpdateAsync(user);
             if (!setFirstNameResult.Succeeded)
             {
                 StatusMessage = "Unexpected error when trying to set first name.";
-                return RedirectToPage();
-            }
-        }
-
-        if (Input.LastName != user.LastName)
-        {
-            user.LastName = Input.LastName;
-            var setLastNameResult = await _userManager.UpdateAsync(user);
-            if (!setLastNameResult.Succeeded)
-            {
-                StatusMessage = "Unexpected error when trying to set last name.";
                 return RedirectToPage();
             }
         }
@@ -122,9 +110,9 @@ public class IndexModel : PageModel
         [Display(Name = "Phone number")]
         public string PhoneNumber { get; set; }
 
-        [Display(Name = "First name")] public string FirstName { get; set; }
-
-        [Display(Name = "Last name")] public string LastName { get; set; }
+        [Display(Name = "Full name")]
+        [MaxLength(50)]
+        public string FullName { get; set; }
 
         [DataType(DataType.Date)]
         [Display(Name = "Date of birth")]
