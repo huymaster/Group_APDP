@@ -1,5 +1,6 @@
 ﻿using System.Security;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Testcontainers.PostgreSql;
 using WebApp.Data;
 
@@ -36,7 +37,8 @@ public class PSQLFixture : IAsyncLifetime
     {
         return new DbContextOptionsBuilder<TContext>()
             .UseNpgsql(_container.GetConnectionString())
-            .UseSnakeCaseNamingConvention()
+            .UseCamelCaseNamingConvention()
+            .ConfigureWarnings(x => x.Ignore(RelationalEventId.PendingModelChangesWarning))
             .Options;
     }
 
@@ -48,7 +50,7 @@ public class PSQLFixture : IAsyncLifetime
             "Host=studentmanager.ddns.net;Port=5432;Username=web_client;Password=123456;Database=postgres;SearchPath=student_manager";
         return new DbContextOptionsBuilder<TContext>()
             .UseNpgsql(connectionString)
-            .UseSnakeCaseNamingConvention()
+            .UseCamelCaseNamingConvention()
             .Options;
     }
 }
