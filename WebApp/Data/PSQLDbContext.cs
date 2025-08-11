@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
+using WebApp.Models;
 
 namespace WebApp.Data;
 
@@ -9,6 +10,9 @@ public class PSQLDbContext(
 ) : DbContext(options)
 {
     private readonly ILogger<PSQLDbContext> logger = logger ?? new NullLogger<PSQLDbContext>();
+    
+    public DbSet<Course> Courses { get; set; }
+    public DbSet<AssignedUser> AssignedUsers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

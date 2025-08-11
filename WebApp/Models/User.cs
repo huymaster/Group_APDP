@@ -8,4 +8,6 @@ public class User : IdentityUser
     [MaxLength(50)] public string? FullName { get; set; }
 
     public DateOnly BirthDate { get; set; }
+    
+    public ICollection<AssignedUser>  AssignedUsers { get; set; }
 }
