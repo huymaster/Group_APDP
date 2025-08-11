@@ -12,4 +12,10 @@ public class UnitTesting(PSQLFixture fixture) : IClassFixture<PSQLFixture>
             NullLogger<ApplicationIdentityDbContext>.Instance);
         Assert.NotNull(context);
     }
+
+    [Fact]
+    public void AutoPass()
+    {
+        Assert.True(true);
+    }
 }
