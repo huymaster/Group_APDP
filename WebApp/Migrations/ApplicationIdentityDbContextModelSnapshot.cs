@@ -33,22 +33,22 @@ namespace WebApp.Migrations
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text")
-                        .HasColumnName("claim_type");
+                        .HasColumnName("claimType");
 
                     b.Property<string>("ClaimValue")
                         .HasColumnType("text")
-                        .HasColumnName("claim_value");
+                        .HasColumnName("claimValue");
 
                     b.Property<string>("RoleId")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("role_id");
+                        .HasColumnName("roleId");
 
                     b.HasKey("Id")
-                        .HasName("pk_asp_net_role_claims");
+                        .HasName("pK_AspNetRoleClaims");
 
                     b.HasIndex("RoleId")
-                        .HasDatabaseName("ix_asp_net_role_claims_role_id");
+                        .HasDatabaseName("iX_AspNetRoleClaims_roleId");
 
                     b.ToTable("AspNetRoleClaims", (string)null);
                 });
@@ -64,22 +64,22 @@ namespace WebApp.Migrations
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text")
-                        .HasColumnName("claim_type");
+                        .HasColumnName("claimType");
 
                     b.Property<string>("ClaimValue")
                         .HasColumnType("text")
-                        .HasColumnName("claim_value");
+                        .HasColumnName("claimValue");
 
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("user_id");
+                        .HasColumnName("userId");
 
                     b.HasKey("Id")
-                        .HasName("pk_asp_net_user_claims");
+                        .HasName("pK_AspNetUserClaims");
 
                     b.HasIndex("UserId")
-                        .HasDatabaseName("ix_asp_net_user_claims_user_id");
+                        .HasDatabaseName("iX_AspNetUserClaims_userId");
 
                     b.ToTable("AspNetUserClaims", (string)null);
                 });
@@ -88,26 +88,26 @@ namespace WebApp.Migrations
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("text")
-                        .HasColumnName("login_provider");
+                        .HasColumnName("loginProvider");
 
                     b.Property<string>("ProviderKey")
                         .HasColumnType("text")
-                        .HasColumnName("provider_key");
+                        .HasColumnName("providerKey");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("text")
-                        .HasColumnName("provider_display_name");
+                        .HasColumnName("providerDisplayName");
 
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("user_id");
+                        .HasColumnName("userId");
 
                     b.HasKey("LoginProvider", "ProviderKey")
-                        .HasName("pk_asp_net_user_logins");
+                        .HasName("pK_AspNetUserLogins");
 
                     b.HasIndex("UserId")
-                        .HasDatabaseName("ix_asp_net_user_logins_user_id");
+                        .HasDatabaseName("iX_AspNetUserLogins_userId");
 
                     b.ToTable("AspNetUserLogins", (string)null);
                 });
@@ -116,17 +116,17 @@ namespace WebApp.Migrations
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("text")
-                        .HasColumnName("user_id");
+                        .HasColumnName("userId");
 
                     b.Property<string>("RoleId")
                         .HasColumnType("text")
-                        .HasColumnName("role_id");
+                        .HasColumnName("roleId");
 
                     b.HasKey("UserId", "RoleId")
-                        .HasName("pk_asp_net_user_roles");
+                        .HasName("pK_AspNetUserRoles");
 
                     b.HasIndex("RoleId")
-                        .HasDatabaseName("ix_asp_net_user_roles_role_id");
+                        .HasDatabaseName("iX_AspNetUserRoles_roleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
@@ -135,11 +135,11 @@ namespace WebApp.Migrations
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("text")
-                        .HasColumnName("user_id");
+                        .HasColumnName("userId");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("text")
-                        .HasColumnName("login_provider");
+                        .HasColumnName("loginProvider");
 
                     b.Property<string>("Name")
                         .HasColumnType("text")
@@ -150,9 +150,78 @@ namespace WebApp.Migrations
                         .HasColumnName("value");
 
                     b.HasKey("UserId", "LoginProvider", "Name")
-                        .HasName("pk_asp_net_user_tokens");
+                        .HasName("pK_AspNetUserTokens");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("WebApp.Models.AssignedUser", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text")
+                        .HasColumnName("userId");
+
+                    b.Property<string>("CourseId")
+                        .HasColumnType("character varying(36)")
+                        .HasColumnName("courseId");
+
+                    b.HasKey("UserId", "CourseId")
+                        .HasName("pK_assignedUsers");
+
+                    b.HasIndex("CourseId")
+                        .HasDatabaseName("iX_assignedUsers_courseId");
+
+                    b.ToTable("assignedUsers", (string)null);
+                });
+
+            modelBuilder.Entity("WebApp.Models.Course", b =>
+                {
+                    b.Property<string>("CourseId")
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)")
+                        .HasColumnName("courseId");
+
+                    b.Property<string>("CourseCode")
+                        .IsRequired()
+                        .HasMaxLength(12)
+                        .HasColumnType("character varying(12)")
+                        .HasColumnName("courseCode");
+
+                    b.Property<string>("CourseName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("courseName");
+
+                    b.Property<int>("Credits")
+                        .HasColumnType("integer")
+                        .HasColumnName("credits");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("description");
+
+                    b.Property<DateOnly>("EndDate")
+                        .HasColumnType("date")
+                        .HasColumnName("endDate");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date")
+                        .HasColumnName("startDate");
+
+                    b.Property<string>("TeacherId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("teacherId");
+
+                    b.HasKey("CourseId")
+                        .HasName("pK_courses");
+
+                    b.HasIndex("TeacherId")
+                        .HasDatabaseName("iX_courses_teacherId");
+
+                    b.ToTable("courses", (string)null);
                 });
 
             modelBuilder.Entity("WebApp.Models.User", b =>
@@ -163,16 +232,16 @@ namespace WebApp.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer")
-                        .HasColumnName("access_failed_count");
+                        .HasColumnName("accessFailedCount");
 
                     b.Property<DateOnly>("BirthDate")
                         .HasColumnType("date")
-                        .HasColumnName("birth_date");
+                        .HasColumnName("birthDate");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text")
-                        .HasColumnName("concurrency_stamp");
+                        .HasColumnName("concurrencyStamp");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -181,58 +250,58 @@ namespace WebApp.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean")
-                        .HasColumnName("email_confirmed");
+                        .HasColumnName("emailConfirmed");
 
                     b.Property<string>("FullName")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
-                        .HasColumnName("full_name");
+                        .HasColumnName("fullName");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean")
-                        .HasColumnName("lockout_enabled");
+                        .HasColumnName("lockoutEnabled");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("lockout_end");
+                        .HasColumnName("lockoutEnd");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
-                        .HasColumnName("normalized_email");
+                        .HasColumnName("normalizedEmail");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
-                        .HasColumnName("normalized_user_name");
+                        .HasColumnName("normalizedUserName");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text")
-                        .HasColumnName("password_hash");
+                        .HasColumnName("passwordHash");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text")
-                        .HasColumnName("phone_number");
+                        .HasColumnName("phoneNumber");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean")
-                        .HasColumnName("phone_number_confirmed");
+                        .HasColumnName("phoneNumberConfirmed");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text")
-                        .HasColumnName("security_stamp");
+                        .HasColumnName("securityStamp");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean")
-                        .HasColumnName("two_factor_enabled");
+                        .HasColumnName("twoFactorEnabled");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
-                        .HasColumnName("user_name");
+                        .HasColumnName("userName");
 
                     b.HasKey("Id")
-                        .HasName("pk_asp_net_users");
+                        .HasName("pK_AspNetUsers");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -253,7 +322,7 @@ namespace WebApp.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text")
-                        .HasColumnName("concurrency_stamp");
+                        .HasColumnName("concurrencyStamp");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
@@ -263,10 +332,10 @@ namespace WebApp.Migrations
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
-                        .HasColumnName("normalized_name");
+                        .HasColumnName("normalizedName");
 
                     b.HasKey("Id")
-                        .HasName("pk_asp_net_roles");
+                        .HasName("pK_AspNetRoles");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
@@ -282,7 +351,7 @@ namespace WebApp.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_asp_net_role_claims_asp_net_roles_role_id");
+                        .HasConstraintName("fK_AspNetRoleClaims_AspNetRoles_roleId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -292,7 +361,7 @@ namespace WebApp.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_asp_net_user_claims_asp_net_users_user_id");
+                        .HasConstraintName("fK_AspNetUserClaims_AspNetUsers_userId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -302,7 +371,7 @@ namespace WebApp.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_asp_net_user_logins_asp_net_users_user_id");
+                        .HasConstraintName("fK_AspNetUserLogins_AspNetUsers_userId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -312,14 +381,14 @@ namespace WebApp.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_asp_net_user_roles_asp_net_roles_role_id");
+                        .HasConstraintName("fK_AspNetUserRoles_AspNetRoles_roleId");
 
                     b.HasOne("WebApp.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_asp_net_user_roles_asp_net_users_user_id");
+                        .HasConstraintName("fK_AspNetUserRoles_AspNetUsers_userId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -329,7 +398,50 @@ namespace WebApp.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_asp_net_user_tokens_asp_net_users_user_id");
+                        .HasConstraintName("fK_AspNetUserTokens_AspNetUsers_userId");
+                });
+
+            modelBuilder.Entity("WebApp.Models.AssignedUser", b =>
+                {
+                    b.HasOne("WebApp.Models.Course", "Course")
+                        .WithMany("AssignedUsers")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fK_assignedUsers_courses_courseId");
+
+                    b.HasOne("WebApp.Models.User", "User")
+                        .WithMany("AssignedUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fK_assignedUsers_AspNetUsers_userId");
+
+                    b.Navigation("Course");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebApp.Models.Course", b =>
+                {
+                    b.HasOne("WebApp.Models.User", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fK_courses_users_teacherId");
+
+                    b.Navigation("Teacher");
+                });
+
+            modelBuilder.Entity("WebApp.Models.Course", b =>
+                {
+                    b.Navigation("AssignedUsers");
+                });
+
+            modelBuilder.Entity("WebApp.Models.User", b =>
+                {
+                    b.Navigation("AssignedUsers");
                 });
 #pragma warning restore 612, 618
         }

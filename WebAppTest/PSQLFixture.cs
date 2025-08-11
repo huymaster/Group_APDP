@@ -18,10 +18,10 @@ public class PSQLFixture : IAsyncLifetime
     {
         await _container.StartAsync();
         var connectionString = _container.GetConnectionString();
-        var optionsBuilder = new DbContextOptionsBuilder<PSQLDbContext>();
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationIdentityDbContext>();
         optionsBuilder.UseSnakeCaseNamingConvention();
         optionsBuilder.UseNpgsql(connectionString);
-        await using var context = new PSQLDbContext(optionsBuilder.Options);
+        await using var context = new ApplicationIdentityDbContext(optionsBuilder.Options);
         await context.Database.EnsureDeletedAsync();
         await context.Database.MigrateAsync();
     }

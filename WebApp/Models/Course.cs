@@ -1,25 +1,24 @@
 using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApp.Models;
-[PrimaryKey("CourseCode")]
+
 public class Course
 {
-    [Required]
-    public string CourseCode { get; set; }
-    [Required]
-    public string CourseName { get; set; }
-    
-    public string? Description { get; set; }
-    
-    [Required]
-    public int Credits { get; set; }
-    [Required]
-    public  DateOnly StartDate { get; set; }
-    [Required]
-    public DateOnly EndDate { get; set; }
-    
-    [Required]
-    public User Teacher { get; set; }
-    public ICollection<AssignedUser>  AssignedUsers { get; set; }
+    [Required] [MaxLength(36)] public string CourseId { get; set; } = Guid.NewGuid().ToString();
+    [Required] [MaxLength(12)] public required string CourseCode { get; set; }
+
+    [Required] [MaxLength(50)] public required string CourseName { get; set; }
+
+    [MaxLength(100)] public string? Description { get; set; }
+
+    [Required] public int Credits { get; set; }
+
+    [Required] public DateOnly StartDate { get; set; }
+
+    [Required] public DateOnly EndDate { get; set; }
+
+    [Required] public required User Teacher { get; set; }
+
+    [NotMapped] public ICollection<AssignedUser> AssignedUsers { get; set; } = new List<AssignedUser>();
 }

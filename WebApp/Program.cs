@@ -9,13 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<ApplicationIdentityDbContext>(options =>
-    options.UseNpgsql(connectionString)
-        .UseSnakeCaseNamingConvention()
-);
-
-builder.Services.AddDbContext<PSQLDbContext>(options =>
-    options.UseNpgsql(connectionString)
-        .UseSnakeCaseNamingConvention()
+    options.UseNpgsql(connectionString).UseCamelCaseNamingConvention()
 );
 
 builder.Services.AddIdentity<User, UserRole>(options => { options.SignIn.RequireConfirmedAccount = true; })
@@ -52,20 +46,15 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 
 var app = builder.Build();
 
-await using (var scope = app.Services.CreateAsyncScope())
-{
-    await SeedData.Initialize(scope.ServiceProvider);
-}
-
-await using (var psqlDbContext = app.Services.CreateScope().ServiceProvider.GetRequiredService<PSQLDbContext>())
-{
-    await psqlDbContext.Database.MigrateAsync();
-}
-
 await using (var identityDbContext =
              app.Services.CreateScope().ServiceProvider.GetRequiredService<ApplicationIdentityDbContext>())
 {
     await identityDbContext.Database.MigrateAsync();
+}
+
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    await SeedData.Initialize(scope.ServiceProvider);
 }
 
 app.UseHttpsRedirection();

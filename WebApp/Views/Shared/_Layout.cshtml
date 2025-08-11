@@ -1,9 +1,7 @@
 ﻿@using System.Security.Claims
-@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
-@inject IAuthorizationService AuthorizationService
 
 @{
     var welcome = "Hello";
