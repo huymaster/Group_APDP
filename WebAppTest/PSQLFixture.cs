@@ -21,7 +21,7 @@ public class PSQLFixture : IAsyncLifetime
         var connectionString = _container.GetConnectionString();
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationIdentityDbContext>();
         optionsBuilder.UseCamelCaseNamingConvention();
-        optionsBuilder.ConfigureWarnings(x => x.Ignore(RelationalEventId.PendingModelChangesWarning))
+        optionsBuilder.ConfigureWarnings(x => x.Ignore(RelationalEventId.PendingModelChangesWarning));
         optionsBuilder.UseNpgsql(connectionString);
         await using var context = new ApplicationIdentityDbContext(optionsBuilder.Options);
         await context.Database.EnsureDeletedAsync();
