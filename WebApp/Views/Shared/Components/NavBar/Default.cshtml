@@ -1,0 +1,9 @@
+﻿@model IEnumerable<WebApp.ViewComponents.NavBarViewComponent.NavBarItem>
+
+@foreach (var item in Model)
+{
+    <li class="nav-item">
+        <a class="nav-link" asp-area="@item.Area" asp-controller="@item.Controller"
+           asp-action="@item.Action">@item.Name</a>
+    </li>
+}

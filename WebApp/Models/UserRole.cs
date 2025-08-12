@@ -29,7 +29,7 @@ public class UserRole(string name) : IdentityRole(name)
 
 public enum Role
 {
-    Manager,
-    Teacher,
-    Student
+    Student = 0,
+    Teacher = 1,
+    Manager = 2
 }

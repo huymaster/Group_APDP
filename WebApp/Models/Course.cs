@@ -19,7 +19,7 @@ public class Course
 
     [Required] public required DateOnly EndDate { get; set; }
 
-    [Required] public required User Teacher { get; set; }
+    public User? Teacher { get; set; } = null;
 
     [NotMapped] public ICollection<AssignedUser> AssignedUsers { get; set; } = new List<AssignedUser>();
 

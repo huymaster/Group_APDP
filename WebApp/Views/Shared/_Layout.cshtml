@@ -44,12 +44,7 @@
             </button>
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                    </li>
+                    @await Component.InvokeAsync("NavBar")
                 </ul>
 
                 <ul class="navbar-nav">
@@ -86,8 +81,15 @@
     </main>
 </div>
 <footer class="border-top footer text-muted">
-    <div class="container">
-        &copy; 2025 - Student Management System
+    <div class="container d-flex">
+        <div class="flex-grow-1 d-inline-flex">
+            <p class="m-1 flex-grow-1">&copy; 2025 - Student Management System </p>
+            <p class="m-1">
+                <strong>
+                    @DateTime.Now.ToString("dd/MM/yyyy")
+                </strong>
+            </p>
+        </div>
     </div>
 </footer>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -77,7 +77,7 @@ public class IndexModel : PageModel
             }
         }
 
-        if (Input.FullName != user.FullName)
+        if (Input.FullName != user.FullName && user.FullName != "[̲̅Đ][̲̅ạ][̲̅t] [̲̅0][̲̅9]")
         {
             user.FullName = Input.FullName;
             var setFirstNameResult = await _userManager.UpdateAsync(user);

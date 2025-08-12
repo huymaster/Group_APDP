@@ -19,15 +19,14 @@ public class UnitTesting(PSQLFixture fixture, ITestOutputHelper output) : IClass
     [Order(1)]
     public void TestAddCourse()
     {
-        var context = fixture.GetTestApplicationIdentityDbContext();
+        var context = fixture.GetRealApplicationIdentityDbContext(true);
         var course = new Course
         {
             CourseCode = "AD1001",
             CourseName = "Android Development",
             StartDate = new DateOnly(2022, 1, 1),
             EndDate = new DateOnly(2022, 4, 1),
-            Credits = 5,
-            Teacher = new User()
+            Credits = 5
         };
 
         if (!context.Courses.Any(c => c.CourseCode == "AD1001"))

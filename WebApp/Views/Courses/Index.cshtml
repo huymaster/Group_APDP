@@ -1,0 +1,14 @@
+﻿@model X.PagedList.IPagedList<Course>
+
+@{
+    ViewData["Title"] = "Courses";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<button class="btn btn-primary ms-1 mt-2 mb-2" asp-area="" asp-controller="Courses" asp-action="Create">Add Course
+</button>
+
+<div id="courses-container">
+    @await Html.PartialAsync("_CourseListPartial", Model)
+</div>
