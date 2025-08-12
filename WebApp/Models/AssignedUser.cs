@@ -5,9 +5,9 @@ namespace WebApp.Models;
 
 public class AssignedUser
 {
-    [Required] public string UserId { get; set; }
+    [Required] [MaxLength(36)] public required string UserId { get; set; }
     [NotMapped] public required User User { get; set; }
 
-    [Required] public string CourseId { get; set; }
+    [Required] [MaxLength(36)] public required string CourseId { get; set; }
     [NotMapped] public required Course Course { get; set; }
 }

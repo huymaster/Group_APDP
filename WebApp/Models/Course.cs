@@ -12,13 +12,18 @@ public class Course
 
     [MaxLength(100)] public string? Description { get; set; }
 
-    [Required] public int Credits { get; set; }
+    [Required] public required int Credits { get; set; }
 
-    [Required] public DateOnly StartDate { get; set; }
+    [Required] public required DateOnly StartDate { get; set; }
 
-    [Required] public DateOnly EndDate { get; set; }
+    [Required] public required DateOnly EndDate { get; set; }
 
     [Required] public required User Teacher { get; set; }
 
     [NotMapped] public ICollection<AssignedUser> AssignedUsers { get; set; } = new List<AssignedUser>();
+
+    public long GetCourseDuration()
+    {
+        return EndDate.DayNumber - StartDate.DayNumber;
+    }
 }
