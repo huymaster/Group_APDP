@@ -1,21 +1,18 @@
-using Microsoft.Extensions.Logging.Abstractions;
-using WebApp.Data;
+using Xunit.Abstractions;
 
 namespace WebAppTest;
 
-public class UnitTesting(PSQLFixture fixture) : IClassFixture<PSQLFixture>
+public class UnitTesting(PSQLFixture fixture, ITestOutputHelper output) : IClassFixture<PSQLFixture>
 {
     [Fact]
     public void TestIdentityConnect()
     {
-        using var context = new ApplicationIdentityDbContext(fixture.GetTestDbOptions<ApplicationIdentityDbContext>(),
-            NullLogger<ApplicationIdentityDbContext>.Instance);
+        using var context = fixture.GetTestApplicationIdentityDbContext();
         Assert.NotNull(context);
     }
 
     [Fact]
-    public void AutoPass()
+    public void TestAddCourse()
     {
-        Assert.True(true);
     }
 }

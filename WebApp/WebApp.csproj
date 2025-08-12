@@ -8,9 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0"/>
         <PackageReference Include="EFCore.NamingConventions" Version="9.0.0"/>
-        <PackageReference Include="Google.Apis.Auth" Version="1.70.0"/>
-        <PackageReference Include="Google.Apis.Auth.AspNetCore3" Version="1.70.0"/>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.19"/>
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.19"/>
         <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.19"/>
@@ -27,11 +26,15 @@
         </PackageReference>
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4"/>
+        <PackageReference Include="X.PagedList.Mvc.Core" Version="10.5.7"/>
     </ItemGroup>
 
     <ItemGroup>
         <Folder Include="Areas\Identity\Pages\Account\Manage\"/>
-        <Folder Include="Views\User\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <_ContentIncludedByDefault Remove="Views\Account\Login.cshtml"/>
     </ItemGroup>
 
 </Project>

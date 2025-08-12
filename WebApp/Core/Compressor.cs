@@ -17,6 +17,7 @@ public class Compressor(RequestDelegate next)
         }
 
         var originalBodyStream = response.Body;
+        response.ContentLength = null;
         Stream? compressionStream = null;
 
         if (acceptEncoding.Contains("br", StringComparison.OrdinalIgnoreCase))

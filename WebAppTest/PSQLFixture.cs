@@ -54,4 +54,16 @@ public class PSQLFixture : IAsyncLifetime
             .UseCamelCaseNamingConvention()
             .Options;
     }
+
+    public ApplicationIdentityDbContext GetTestApplicationIdentityDbContext()
+    {
+        return new ApplicationIdentityDbContext(GetTestDbOptions<ApplicationIdentityDbContext>());
+    }
+
+    public ApplicationIdentityDbContext GetRealApplicationIdentityDbContext(
+        bool AreYouSureYouWantToUseRealDatabase = false)
+    {
+        return new ApplicationIdentityDbContext(
+            GetRealDbOptions<ApplicationIdentityDbContext>(AreYouSureYouWantToUseRealDatabase));
+    }
 }
