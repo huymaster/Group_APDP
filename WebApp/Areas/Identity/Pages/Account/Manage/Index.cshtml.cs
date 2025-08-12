@@ -4,6 +4,7 @@
 #nullable disable
 
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -77,29 +78,26 @@ public class IndexModel : PageModel
             }
         }
 
-        if (Input.FullName != user.FullName && user.FullName != "[̲̅Đ][̲̅ạ][̲̅t] [̲̅0][̲̅9]")
-        {
-            user.FullName = Input.FullName;
-            var setFirstNameResult = await _userManager.UpdateAsync(user);
-            if (!setFirstNameResult.Succeeded)
-            {
-                StatusMessage = "Unexpected error when trying to set first name.";
-                return RedirectToPage();
-            }
-        }
+        if (Input.FullName != user.FullName && user.FullName != "[̲̅Đ][̲̅ạ][̲̅t] [̲̅0][̲̅9]" &&
+            user.FullName != "kutoMadter"
+           ) user.FullName = Input.FullName;
 
-        if (Input.DateOfBirth != user.BirthDate)
-        {
-            user.BirthDate = Input.DateOfBirth;
-            var setDateResult = await _userManager.UpdateAsync(user);
-            if (!setDateResult.Succeeded)
-            {
-                StatusMessage = "Unexpected error when trying to set date of birth.";
-                return RedirectToPage();
-            }
-        }
+        if (Input.DateOfBirth != user.BirthDate) user.BirthDate = Input.DateOfBirth;
 
+        var claims = await _userManager.GetClaimsAsync(user);
+
+        var fullNameClaim = claims.FirstOrDefault(c => c.Type == "FullName");
+        if (fullNameClaim != null) await _userManager.RemoveClaimAsync(user, fullNameClaim);
+
+        var birthDateClaim = claims.FirstOrDefault(c => c.Type == "BirthDate");
+        if (birthDateClaim != null) await _userManager.RemoveClaimAsync(user, birthDateClaim);
+
+        claims.Add(new Claim("FullName", user.FullName ?? ""));
+        claims.Add(new Claim(ClaimTypes.DateOfBirth, user.BirthDate.ToString("o")));
+
+        await _userManager.UpdateAsync(user);
         await _signInManager.RefreshSignInAsync(user);
+
         StatusMessage = "Your profile has been updated";
         return RedirectToPage();
     }

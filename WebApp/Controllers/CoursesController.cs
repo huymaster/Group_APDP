@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Core;
 using WebApp.Data;
+using WebApp.Models;
 using X.PagedList.Extensions;
 
 namespace WebApp.Controllers;
@@ -19,5 +20,14 @@ public class CoursesController(ApplicationIdentityDbContext context) : Controlle
         var pagedList = courses.ToPagedList(currentPage, pageSize);
 
         return View(pagedList);
+    }
+
+    [HttpPost]
+    [Authorize(Policy = Policies.CanManageCourses)]
+    public IActionResult Create(Course course)
+    {
+        context.Courses.Add(course);
+        context.SaveChanges();
+        return RedirectToAction("Index");
     }
 }

@@ -6,9 +6,17 @@
 
 <h2>@ViewData["Title"]</h2>
 
-<button class="btn btn-primary ms-1 mt-2 mb-2" asp-area="" asp-controller="Courses" asp-action="Create">Add Course
+<button class="btn btn-primary ms-1 mt-2 mb-2" id="create" asp-area="" asp-controller="Courses" asp-action="CreateForm">
+    Add
+    Course
 </button>
 
 <div id="courses-container">
     @await Html.PartialAsync("_CourseListPartial", Model)
+</div>
+
+<div class="modal fade" id="createCourseModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div id="modal-content" class="modal-content"></div>
+    </div>
 </div>

@@ -4,6 +4,7 @@
 #nullable disable
 
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,10 +17,12 @@ public class LoginModel : PageModel
 {
     private readonly ILogger<LoginModel> _logger;
     private readonly SignInManager<User> _signInManager;
+    private readonly UserManager<User> _userManager;
 
-    public LoginModel(SignInManager<User> signInManager, ILogger<LoginModel> logger)
+    public LoginModel(SignInManager<User> signInManager, UserManager<User> userManager, ILogger<LoginModel> logger)
     {
         _signInManager = signInManager;
+        _userManager = userManager;
         _logger = logger;
     }
 
@@ -71,13 +74,18 @@ public class LoginModel : PageModel
 
         if (ModelState.IsValid)
         {
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-            var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe,
-                false);
+            var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, false);
             if (result.Succeeded)
             {
-                _logger.LogInformation("User logged in.");
+                var user = await _userManager.FindByNameAsync(Input.Email);
+                if (user == null) return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+
+                var claims = new List<Claim>
+                {
+                    new("FullName", user.FullName ?? ""),
+                    new(ClaimTypes.DateOfBirth, user.BirthDate.ToString("o"))
+                };
+                await _signInManager.SignInWithClaimsAsync(user, Input.RememberMe, claims);
                 return LocalRedirect(returnUrl);
             }
 
@@ -85,17 +93,11 @@ public class LoginModel : PageModel
                 return RedirectToPage("./LoginWith2fa",
                     new { ReturnUrl = returnUrl, Input.RememberMe });
 
-            if (result.IsLockedOut)
-            {
-                _logger.LogWarning("User account locked out.");
-                return RedirectToPage("./Lockout");
-            }
+            if (result.IsLockedOut) return RedirectToPage("./Lockout");
 
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-            return Page();
         }
 
-        // If we got this far, something failed, redisplay form
         return Page();
     }
 
