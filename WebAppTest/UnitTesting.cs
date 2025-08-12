@@ -27,10 +27,22 @@ public class UnitTesting(PSQLFixture fixture, ITestOutputHelper output) : IClass
             Teacher = new User()
         };
 
-        context.Courses.Add(course);
-        context.SaveChanges();
+        if (!context.Courses.Any(c => c.CourseCode == "AD1001"))
+        {
+            context.Courses.Add(course);
+            context.SaveChanges();
+        }
 
         Assert.Equal(1, context.Courses.Count());
-        Assert.True(context.Courses.Any(c => c.CourseCode == "AD1001"));
+    }
+
+    [Fact]
+    public void TestFindCourse()
+    {
+        var context = fixture.GetTestApplicationIdentityDbContext();
+        var found = context.Courses.Any(c => c.CourseCode == "AD1001");
+        var course = context.Courses.FirstOrDefault(c => c.CourseCode == "AD1001");
+        Assert.True(found);
+        Assert.NotNull(course);
     }
 }

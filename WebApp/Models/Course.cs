@@ -6,6 +6,7 @@ namespace WebApp.Models;
 public class Course
 {
     [Required] [MaxLength(36)] public string CourseId { get; set; } = Guid.NewGuid().ToString();
+
     [Required] [MaxLength(12)] public required string CourseCode { get; set; }
 
     [Required] [MaxLength(50)] public required string CourseName { get; set; }

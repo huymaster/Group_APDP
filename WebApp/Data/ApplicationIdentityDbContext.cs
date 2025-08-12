@@ -26,6 +26,10 @@ public class ApplicationIdentityDbContext(
 
     private static void CreateTables(ModelBuilder builder)
     {
+        builder.Entity<Course>()
+            .HasIndex(e => e.CourseCode)
+            .IsUnique();
+
         builder.Entity<AssignedUser>()
             .HasKey(e => new { e.UserId, e.CourseId });
 
