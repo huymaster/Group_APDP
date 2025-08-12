@@ -99,7 +99,6 @@ await using (var scope = app.Services.CreateAsyncScope())
 
 app.MapHealthChecks("/ServerHealth");
 
-// app.UseMiddleware<Compressor>();
 app.UseResponseCompression();
 app.UseHttpsRedirection();
 app.UseStaticFiles();

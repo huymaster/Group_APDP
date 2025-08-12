@@ -10,9 +10,9 @@ public class PSQLFixture : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _container = new PostgreSqlBuilder()
         .WithImage("postgres:latest")
-        .WithDatabase("testdb")
-        .WithUsername("testuser")
-        .WithPassword("testpassword")
+        .WithUsername("admin")
+        .WithPassword("0")
+        .WithCleanUp(false)
         .Build();
 
     public async Task InitializeAsync()
@@ -24,7 +24,6 @@ public class PSQLFixture : IAsyncLifetime
         optionsBuilder.ConfigureWarnings(x => x.Ignore(RelationalEventId.PendingModelChangesWarning));
         optionsBuilder.UseNpgsql(connectionString);
         await using var context = new ApplicationIdentityDbContext(optionsBuilder.Options);
-        await context.Database.EnsureDeletedAsync();
         await context.Database.MigrateAsync();
     }
 
@@ -32,6 +31,11 @@ public class PSQLFixture : IAsyncLifetime
     {
         await _container.StopAsync();
         await _container.DisposeAsync();
+    }
+
+    public string GetConnectionString()
+    {
+        return _container.GetConnectionString();
     }
 
     public DbContextOptions<TContext> GetTestDbOptions<TContext>() where TContext : DbContext
