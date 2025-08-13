@@ -12,4 +12,5 @@ public static class Certificate
         var certificates = store.Certificates.Find(X509FindType.FindByThumbprint, thumbprint, false);
         return certificates.FirstOrDefault();
     }
+    
 }

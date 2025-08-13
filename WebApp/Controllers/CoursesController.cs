@@ -116,4 +116,5 @@ public class CoursesController(
 
         return RedirectToAction(nameof(Index));
     }
+    
 }
