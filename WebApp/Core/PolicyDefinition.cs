@@ -22,7 +22,8 @@ public static class PolicyDefinition
         options.AddPolicy(Policies.CanManageStudents, policy => policy.RequireRole(ROLE_MANAGER, ROLE_TEACHER));
         options.AddPolicy(Policies.CanManageRoles, policy => policy.RequireRole(ROLE_MANAGER));
         options.AddPolicy(Policies.CanAssignTeachers, policy => policy.RequireRole(ROLE_MANAGER));
-        options.AddPolicy(Policies.CanManageCourses, policy => policy.RequireRole(ROLE_MANAGER, ROLE_TEACHER));
+        options.AddPolicy(Policies.CanManageCourses, policy => policy.RequireRole(ROLE_MANAGER));
+        options.AddPolicy(Policies.CanViewCourses, policy => policy.RequireRole(ROLE_MANAGER, ROLE_TEACHER));
         options.AddPolicy(Policies.CanAssignStudents, policy => policy.RequireRole(ROLE_MANAGER, ROLE_TEACHER));
     }
 }
@@ -37,6 +38,7 @@ public static class Policies
     public const string CanManageStudents = "CanManageStudents";
     public const string CanManageRoles = "CanManageRoles";
     public const string CanManageCourses = "CanManageCourses";
+    public const string CanViewCourses = "CanViewCourses";
     public const string CanAssignTeachers = "CanAssignTeachers";
     public const string CanAssignStudents = "CanAssignStudents";
 }

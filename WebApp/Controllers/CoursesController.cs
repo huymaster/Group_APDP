@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Core;
 using WebApp.Data;
@@ -8,9 +10,12 @@ using X.PagedList.Extensions;
 
 namespace WebApp.Controllers;
 
-public class CoursesController(ApplicationIdentityDbContext context, ILogger<CoursesController> logger) : Controller
+public class CoursesController(
+    ApplicationIdentityDbContext context,
+    UserManager<User> userManager,
+    ILogger<CoursesController> logger) : Controller
 {
-    [Authorize(Policy = Policies.CanManageCourses)]
+    [Authorize(Policy = Policies.CanViewCourses)]
     public IActionResult Index(int? page)
     {
         var courses = context.Courses.Include(c => c!.Teacher).ToList();
@@ -24,8 +29,11 @@ public class CoursesController(ApplicationIdentityDbContext context, ILogger<Cou
     }
 
     [Authorize(Policy = Policies.CanManageCourses)]
-    public IActionResult Add()
+    public async Task<IActionResult> Add()
     {
+        var teachers = await userManager.GetUsersInRoleAsync(nameof(Role.Teacher));
+        ViewBag.Teachers = new SelectList(teachers, "Id", "FullName");
+
         return View();
     }
 
@@ -34,10 +42,16 @@ public class CoursesController(ApplicationIdentityDbContext context, ILogger<Cou
     [Authorize(Policy = Policies.CanManageCourses)]
     public async Task<IActionResult> Add(
         [Bind("CourseName,CourseCode,Description,StartDate,EndDate,TeacherId")]
-        Course course)
+        Course course
+    )
     {
-        if (!ModelState.IsValid) return View(course);
-        course.CourseId = Guid.NewGuid().ToString();
+        if (!ModelState.IsValid)
+        {
+            var teachers = await userManager.GetUsersInRoleAsync(nameof(Role.Teacher));
+            ViewBag.Teachers = new SelectList(teachers, "Id", "FullName", course.TeacherId);
+            return View(course);
+        }
+
         context.Add(course);
         await context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
@@ -46,11 +60,60 @@ public class CoursesController(ApplicationIdentityDbContext context, ILogger<Cou
     [Authorize(Policy = Policies.CanManageCourses)]
     public async Task<IActionResult> Edit(string? id)
     {
-        logger.LogInformation("Edit course " + id);
         if (id == null) return NotFound();
-        var course = await context.Courses.Include(c => c.Teacher)
-            .FirstOrDefaultAsync(c => c.CourseId == id);
+
+        var course = await context.Courses.FindAsync(id);
         if (course == null) return NotFound();
+
+        var teachers = await userManager.GetUsersInRoleAsync(nameof(Role.Teacher));
+        ViewBag.Teachers = new SelectList(teachers, "Id", "FullName", course.TeacherId);
+
         return View(course);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Policy = Policies.CanManageCourses)]
+    public async Task<IActionResult> Edit(string id,
+        [Bind("CourseId,CourseName,CourseCode,Description,StartDate,EndDate,TeacherId")]
+        Course course)
+    {
+        if (id != course.CourseId) return NotFound();
+
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                context.Update(course);
+                await context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!context.Courses.Any(e => e.CourseId == course.CourseId)) return NotFound();
+
+                throw;
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        var teachers = await userManager.GetUsersInRoleAsync(nameof(Role.Teacher));
+        ViewBag.Teachers = new SelectList(teachers, "Id", "FullName", course.TeacherId);
+
+        return View(course);
+    }
+
+    [HttpPost]
+    [ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    [Authorize(Policy = Policies.CanManageCourses)]
+    public async Task<IActionResult> DeleteConfirmed(string id)
+    {
+        var course = await context.Courses.FindAsync(id);
+        if (course == null) return RedirectToAction(nameof(Index));
+        context.Courses.Remove(course);
+        await context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Index));
     }
 }

@@ -1,4 +1,12 @@
-﻿@model Course
+﻿@using Microsoft.AspNetCore.Authorization
+@using WebApp.Core
+@model Course
+@inject IAuthorizationService auth
+
+@{
+    var authResult = await auth.AuthorizeAsync(User, null, Policies.CanManageCourses);
+    ViewBag.HasManageCourse = authResult.Succeeded;
+}
 
 <div class="card">
     <div class="card-body d-flex">
@@ -11,15 +19,22 @@
                 <p class="col card-text me-1">To: @Model.EndDate.ToString("dd/MM/yyyy")</p>
             </div>
         </div>
-        <div class="d-flex align-items-end">
-            <button class="btn btn-primary m-1">
-                <a class="text-white" asp-area="" asp-controller="Courses" asp-action="Edit"
+        @if (ViewBag.HasManageCourse)
+        {
+            <div class="d-flex align-items-end">
+                <a class="btn btn-primary m-1" asp-area=""
+                   asp-controller="Courses"
+                   asp-action="Edit"
                    asp-route-id="@Model.CourseId">
                     Edit
                 </a>
-            </button>
-            <button class="btn btn-danger m-1" data-bs-toggle="modal" data-bs-target="#deleteCourseModal">Delete
-            </button>
-        </div>
+                <button class="btn btn-danger m-1"
+                        data-bs-toggle="modal"
+                        data-bs-target="#deleteCourseModal"
+                        data-id="@Model.CourseId">
+                    Delete
+                </button>
+            </div>
+        }
     </div>
 </div>
