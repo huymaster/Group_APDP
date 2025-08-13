@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using WebApp.Models;
 using Xunit.Abstractions;
 using Xunit.Extensions.Ordering;
@@ -8,19 +9,28 @@ public class UnitTesting(PSQLFixture fixture, ITestOutputHelper output) : IClass
 {
     [Fact]
     [Order(0)]
-    public void TestIdentityConnect()
+    public void TestARIdentityConnect()
     {
-        using var context = fixture.GetTestApplicationIdentityDbContext();
+        using var c = fixture.GetRealApplicationIdentityDbContext(true);
+        output.WriteLine(fixture.GetConnectionString());
+        Assert.NotNull(c);
+    }
+
+    [Fact]
+    [Order(0)]
+    public void TestBIdentityConnect()
+    {
+        var context = fixture.GetTestApplicationIdentityDbContext();
         output.WriteLine(fixture.GetConnectionString());
         Assert.NotNull(context);
     }
 
     [Fact]
     [Order(1)]
-    public void TestAddCourse()
+    public void TestCAddCourse()
     {
-        var context = fixture.GetRealApplicationIdentityDbContext(true);
-        var course = new Course
+        var context = fixture.GetTestApplicationIdentityDbContext();
+        Course c = new()
         {
             CourseCode = "AD1001",
             CourseName = "Android Development",
@@ -29,24 +39,54 @@ public class UnitTesting(PSQLFixture fixture, ITestOutputHelper output) : IClass
             Credits = 5
         };
 
-        if (!context.Courses.Any(c => c.CourseCode == "AD1001"))
-        {
-            context.Courses.Add(course);
-            context.SaveChanges();
-        }
+        context.Courses.Add(c);
+        context.SaveChanges();
 
         Assert.Equal(1, context.Courses.Count());
     }
 
     [Fact]
     [Order(2)]
-    public void TestFindCourse()
+    public void TestDFindCourse()
     {
         var context = fixture.GetTestApplicationIdentityDbContext();
-        var found = context.Courses.Any(c => c.CourseCode == "AD1001");
+        context.Courses.Load();
         var course = context.Courses.FirstOrDefault(c => c.CourseCode == "AD1001");
-        output.WriteLine("Found: " + found + " Course: " + course?.CourseId);
-        Assert.True(found);
-        Assert.NotNull(course);
+        Assert.Equal("AD1001", course.CourseCode);
+    }
+
+    [Fact]
+    [Order(4)]
+    public void TestEUpdateCourse()
+    {
+        var context = fixture.GetTestApplicationIdentityDbContext();
+        context.Courses.Load();
+        var course = context.Courses.First();
+        course.CourseCode = "AD1002";
+        context.SaveChanges();
+        Assert.Equal("AD1002", course.CourseCode);
+    }
+
+    [Fact]
+    [Order(5)]
+    public void TestFDeleteCourse()
+    {
+        var context = fixture.GetTestApplicationIdentityDbContext();
+        context.Courses.Load();
+        var course = context.Courses.First();
+        context.Courses.Remove(course);
+        context.SaveChanges();
+        Assert.Equal(0, context.Courses.Count());
+    }
+
+    [Fact]
+    [Order(6)]
+    public void TestGCleanUp()
+    {
+        var context = fixture.GetTestApplicationIdentityDbContext();
+        context.Courses.Load();
+        context.Courses.RemoveRange(context.Courses);
+        context.SaveChanges();
+        Assert.Equal(0, context.Courses.Count());
     }
 }
