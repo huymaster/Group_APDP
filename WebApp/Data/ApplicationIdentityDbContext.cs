@@ -13,7 +13,7 @@ public class ApplicationIdentityDbContext(
     private readonly ILogger<ApplicationIdentityDbContext> _logger =
         logger ?? new NullLogger<ApplicationIdentityDbContext>();
 
-    public DbSet<Course> Courses { get; set; }
+    public DbSet<Course?> Courses { get; set; }
     public DbSet<AssignedUser> AssignedUsers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

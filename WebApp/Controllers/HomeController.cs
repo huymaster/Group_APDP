@@ -6,12 +6,7 @@ namespace WebApp.Controllers;
 
 public class HomeController(UserManager<User> authentication, ILogger<HomeController> logger) : Controller
 {
-    public async Task<IActionResult> Index()
-    {
-        return View();
-    }
-
-    public IActionResult Privacy()
+    public IActionResult Index()
     {
         return View();
     }

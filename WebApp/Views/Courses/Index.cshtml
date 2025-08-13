@@ -6,9 +6,8 @@
 
 <h2>@ViewData["Title"]</h2>
 
-<button class="btn btn-primary ms-1 mt-2 mb-2" id="create" asp-area="" asp-controller="Courses" asp-action="CreateForm">
-    Add
-    Course
+<button class="btn btn-primary ms-1 mt-2 mb-2">
+    <a class="text-white" asp-area="" asp-controller="Courses" asp-action="Add">Add Course</a>
 </button>
 
 <div id="courses-container">

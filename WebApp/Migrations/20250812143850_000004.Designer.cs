@@ -12,7 +12,7 @@ using WebApp.Data;
 namespace WebApp.Migrations
 {
     [DbContext(typeof(ApplicationIdentityDbContext))]
-    [Migration("20250812080350_000004")]
+    [Migration("20250812143850_000004")]
     partial class _000004
     {
         /// <inheritdoc />
