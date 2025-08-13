@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Core;
 using WebApp.Data;
+using WebApp.Models;
 using X.PagedList.Extensions;
 
 namespace WebApp.Controllers;
@@ -14,10 +15,10 @@ public class CoursesController(ApplicationIdentityDbContext context, ILogger<Cou
     {
         var courses = context.Courses.Include(c => c!.Teacher).ToList();
         const int pageSize = 4;
-        var pageNumber = courses.Count / pageSize + 1;
-        var currentPage = page ?? 1;
-        if (currentPage > pageNumber || currentPage < 1) return NotFound();
-        var pagedList = courses.ToPagedList(currentPage, pageSize);
+        var pageNumber = page ?? 1;
+        var pagedList = courses.ToPagedList(pageNumber, pageSize);
+
+        if (pagedList.PageNumber != pageNumber && page != null) return NotFound();
 
         return View(pagedList);
     }
@@ -26,6 +27,20 @@ public class CoursesController(ApplicationIdentityDbContext context, ILogger<Cou
     public IActionResult Add()
     {
         return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Policy = Policies.CanManageCourses)]
+    public async Task<IActionResult> Add(
+        [Bind("CourseName,CourseCode,Description,StartDate,EndDate,TeacherId")]
+        Course course)
+    {
+        if (!ModelState.IsValid) return View(course);
+        course.CourseId = Guid.NewGuid().ToString();
+        context.Add(course);
+        await context.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
     }
 
     [Authorize(Policy = Policies.CanManageCourses)]

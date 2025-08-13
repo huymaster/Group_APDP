@@ -5,21 +5,38 @@ namespace WebApp.Models;
 
 public class Course
 {
-    [Required] [MaxLength(36)] public string CourseId { get; set; } = Guid.NewGuid().ToString();
+    [Display(Name = "Course ID")]
+    [Required]
+    [MaxLength(36)]
+    public string CourseId { get; set; } = Guid.NewGuid().ToString();
 
-    [Required] [MaxLength(12)] public required string CourseCode { get; set; }
+    [Display(Name = "Course code")]
+    [Required]
+    [MaxLength(12)]
+    public required string CourseCode { get; set; }
 
-    [Required] [MaxLength(50)] public required string CourseName { get; set; }
+    [Display(Name = "Course name")]
+    [Required]
+    [MaxLength(50)]
+    public required string CourseName { get; set; }
 
-    [MaxLength(100)] public string? Description { get; set; }
+    [Display(Name = "Course description")]
+    [MaxLength(100)]
+    public string? Description { get; set; }
 
-    [Required] public required int Credits { get; set; }
+    [Display(Name = "Credits")] [Required] public required int Credits { get; set; }
 
-    [Required] public required DateOnly StartDate { get; set; }
+    [Display(Name = "Start date")]
+    [Required]
+    public required DateOnly StartDate { get; set; }
 
-    [Required] public required DateOnly EndDate { get; set; }
+    [Display(Name = "End date")]
+    [Required]
+    public required DateOnly EndDate { get; set; }
 
-    public User? Teacher { get; set; } = null;
+    [Display(Name = "Teacher ID")] public string? TeacherId { get; set; }
+
+    [ForeignKey("TeacherId")] public User? Teacher { get; set; } = null;
 
     [NotMapped] public ICollection<AssignedUser> AssignedUsers { get; set; } = new List<AssignedUser>();
 
