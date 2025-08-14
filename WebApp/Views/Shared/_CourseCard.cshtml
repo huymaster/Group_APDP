@@ -6,9 +6,10 @@
 @{
     var authResult = await auth.AuthorizeAsync(User, null, Policies.CanManageCourses);
     ViewBag.HasManageCourse = authResult.Succeeded;
+    var detailsUrl = Url.Action("Details", "Courses", new { id = Model.CourseId });
 }
 
-<div class="card">
+<div id="card-@Model.CourseId" class="card course-card" style="cursor: pointer" data-details-url="@detailsUrl">
     <div class="card-body d-flex">
         <div class="flex-grow-1">
             <h5 class="card-title">@Model.CourseName (@Model.CourseCode)</h5>

@@ -1,16 +1,14 @@
 ﻿@using X.PagedList.Mvc.Core
-@model X.PagedList.IPagedList<Course>
+@model X.PagedList.IPagedList<User>
 
 <ul class="list-group">
-    @foreach (var course in Model)
+    @foreach (var user in Model)
     {
-        <li class="list-group m-1">
-            @await Html.PartialAsync("_CourseCard", course)
-        </li>
+        @await Html.PartialAsync("_StudentCard", user)
     }
 </ul>
 
-@Html.PagedListPager(Model, page => Url.Action("Index", "Courses", new { page }), new PagedListRenderOptions
+@Html.PagedListPager(Model, page => Url.Action("Index", "Students", new { page }), new PagedListRenderOptions
 {
     LiElementClasses = ["page-item m-1"],
     PageClasses = ["page-link"],

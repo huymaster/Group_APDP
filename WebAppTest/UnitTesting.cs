@@ -9,7 +9,7 @@ public class UnitTesting(PSQLFixture fixture, ITestOutputHelper output) : IClass
 {
     [Fact]
     [Order(0)]
-    public void TestARIdentityConnect()
+    public void TestRIdentityConnect()
     {
         using var c = fixture.GetRealApplicationIdentityDbContext(true);
         output.WriteLine(fixture.GetConnectionString());
@@ -18,7 +18,7 @@ public class UnitTesting(PSQLFixture fixture, ITestOutputHelper output) : IClass
 
     [Fact]
     [Order(0)]
-    public void TestBIdentityConnect()
+    public void TestIdentityConnect()
     {
         var context = fixture.GetTestApplicationIdentityDbContext();
         output.WriteLine(fixture.GetConnectionString());
@@ -27,7 +27,7 @@ public class UnitTesting(PSQLFixture fixture, ITestOutputHelper output) : IClass
 
     [Fact]
     [Order(1)]
-    public void TestCAddCourse()
+    public void TestAddCourse()
     {
         var context = fixture.GetTestApplicationIdentityDbContext();
         Course c = new()
@@ -47,7 +47,7 @@ public class UnitTesting(PSQLFixture fixture, ITestOutputHelper output) : IClass
 
     [Fact]
     [Order(2)]
-    public void TestDFindCourse()
+    public void TestFindCourse()
     {
         var context = fixture.GetTestApplicationIdentityDbContext();
         context.Courses.Load();
@@ -57,7 +57,7 @@ public class UnitTesting(PSQLFixture fixture, ITestOutputHelper output) : IClass
 
     [Fact]
     [Order(4)]
-    public void TestEUpdateCourse()
+    public void TestUpdateCourse()
     {
         var context = fixture.GetTestApplicationIdentityDbContext();
         context.Courses.Load();
@@ -69,7 +69,7 @@ public class UnitTesting(PSQLFixture fixture, ITestOutputHelper output) : IClass
 
     [Fact]
     [Order(5)]
-    public void TestFDeleteCourse()
+    public void TestDeleteCourse()
     {
         var context = fixture.GetTestApplicationIdentityDbContext();
         context.Courses.Load();
@@ -81,7 +81,7 @@ public class UnitTesting(PSQLFixture fixture, ITestOutputHelper output) : IClass
 
     [Fact]
     [Order(6)]
-    public void TestGCleanUp()
+    public void TestCleanUp()
     {
         var context = fixture.GetTestApplicationIdentityDbContext();
         context.Courses.Load();
@@ -89,6 +89,4 @@ public class UnitTesting(PSQLFixture fixture, ITestOutputHelper output) : IClass
         context.SaveChanges();
         Assert.Equal(0, context.Courses.Count());
     }
-
-    
 }

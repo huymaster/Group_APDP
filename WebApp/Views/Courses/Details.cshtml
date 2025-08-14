@@ -1,0 +1,31 @@
+﻿@model Course
+
+@{
+    ViewData["Title"] = "Course Details";
+    var CourseName = Model.CourseName;
+    var CourseCode = Model.CourseCode;
+    var Description = Model.Description;
+    var Teacher = Model.Teacher?.FullName ?? "N/A";
+    var StartDate = Model.StartDate.ToString("dd/MM/yyyy");
+    var EndDate = Model.EndDate.ToString("dd/MM/yyyy");
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="mb-3">
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">@CourseName (@CourseCode)</h5>
+        <p class="card-text">@Description</p>
+        <p class="card-text">Teacher: @Teacher</p>
+        <div class="d-flex flex-wrap">
+            <p class="col">Start: @StartDate</p>
+            <p class="col">End: @EndDate</p>
+        </div>
+    </div>
+</div>
+
+<div hx-get="/Courses/Enroll/@Model.CourseId" hx-target="#enroll-form" hx-swap="outerHTML" hx-trigger="load"></div>

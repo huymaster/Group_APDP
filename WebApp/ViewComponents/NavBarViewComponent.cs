@@ -50,6 +50,8 @@ public class NavBarViewComponent(UserManager<User> userManager) : ViewComponent
     private static void BuildManagerItems(List<NavBarItem> NavBarItems)
     {
         NavBarItems.Add("Courses", "Courses", "Index");
+        NavBarItems.Add("Teachers", "Teachers", "Index");
+        NavBarItems.Add("Students", "Students", "Index");
     }
 
     private static void BuildTeacherItems(List<NavBarItem> NavBarItems)

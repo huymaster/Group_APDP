@@ -12,13 +12,13 @@ namespace WebApp.Controllers;
 
 public class CoursesController(
     ApplicationIdentityDbContext context,
-    UserManager<User> userManager,
-    ILogger<CoursesController> logger) : Controller
+    UserManager<User> userManager
+) : Controller
 {
     [Authorize(Policy = Policies.CanViewCourses)]
     public IActionResult Index(int? page)
     {
-        var courses = context.Courses.Include(c => c!.Teacher).ToList();
+        var courses = context.Courses.Include(c => c.Teacher).ToList();
         const int pageSize = 4;
         var pageNumber = page ?? 1;
         var pagedList = courses.ToPagedList(pageNumber, pageSize);
@@ -35,6 +35,20 @@ public class CoursesController(
         ViewBag.Teachers = new SelectList(teachers, "Id", "FullName");
 
         return View();
+    }
+
+    // Details
+    [Authorize(Policy = Policies.CanViewCourses)]
+    public async Task<IActionResult> Details(string? id)
+    {
+        if (id == null) return NotFound();
+        var course = await context.Courses
+            .Include(c => c.Teacher)
+            .FirstOrDefaultAsync(c => c.CourseId == id);
+
+        if (course == null) return NotFound();
+
+        return View(course);
     }
 
     [HttpPost]
@@ -116,5 +130,4 @@ public class CoursesController(
 
         return RedirectToAction(nameof(Index));
     }
-    
 }
