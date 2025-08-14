@@ -18,7 +18,9 @@ public class CoursesController(
     [Authorize(Policy = Policies.CanViewCourses)]
     public IActionResult Index(int? page)
     {
-        var courses = context.Courses.Include(c => c.Teacher).ToList();
+        var courses = context.Courses
+            .Include(c => c.AssignedUsers)
+            .Include(c => c.Teacher).ToList();
         const int pageSize = 4;
         var pageNumber = page ?? 1;
         var pagedList = courses.ToPagedList(pageNumber, pageSize);
@@ -129,5 +131,51 @@ public class CoursesController(
         await context.SaveChangesAsync();
 
         return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    [Authorize(Policy = Policies.CanViewCourses)]
+    public async Task<IActionResult> GetStudents(string? courseId)
+    {
+        ViewData["CourseId"] = courseId;
+        if (courseId == null) return PartialView("_StudentList", null);
+        var course = await context.Courses.FindAsync(courseId);
+        if (course == null) return PartialView("_StudentList", null);
+        var students = await context.AssignedUsers
+            .Include(u => u.User)
+            .Where(u => u.CourseId == courseId)
+            .Select(u => u.User)
+            .ToListAsync();
+
+        return PartialView("_StudentList", students);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Policy = Policies.CanAssignStudents)]
+    public async Task<IActionResult> RemoveFromCourse(string studentId, string courseId)
+    {
+        var courses = await context.Courses.ToListAsync();
+        var course = courses.FirstOrDefault(c => c.CourseId == courseId);
+        if (course == null)
+            ModelState.AddModelError(string.Empty, "Course not found");
+        var students = await context.Users.ToListAsync();
+        var student = students.FirstOrDefault(s => s.Id == studentId);
+        if (student == null)
+            ModelState.AddModelError(string.Empty, "Student not found");
+
+        var assignedUsers = await context.AssignedUsers.Include(au => au.User).Include(au => au.Course).ToListAsync();
+        var assignedUser = assignedUsers.FirstOrDefault(au => au.CourseId == courseId && au.UserId == studentId);
+        if (assignedUser == null || true)
+            ModelState.AddModelError(string.Empty, "Student not assigned to course");
+
+        if (!ModelState.IsValid)
+            return RedirectToAction(nameof(Details), new { id = courseId });
+
+        if (assignedUser != null)
+            context.AssignedUsers.Remove(assignedUser);
+        await context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Details), new { id = courseId });
     }
 }

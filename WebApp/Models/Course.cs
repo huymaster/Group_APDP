@@ -38,7 +38,7 @@ public class Course
 
     [ForeignKey("TeacherId")] public User? Teacher { get; set; } = null;
 
-    [NotMapped] public ICollection<AssignedUser> AssignedUsers { get; set; } = new List<AssignedUser>();
+    public ICollection<AssignedUser> AssignedUsers { get; set; } = new List<AssignedUser>();
 
     public long GetCourseDuration()
     {

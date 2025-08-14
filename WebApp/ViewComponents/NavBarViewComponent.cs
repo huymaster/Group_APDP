@@ -61,7 +61,7 @@ public class NavBarViewComponent(UserManager<User> userManager) : ViewComponent
 
     private static void BuildStudentItems(List<NavBarItem> NavBarItems)
     {
-        NavBarItems.Add("Student", "", "");
+        NavBarItems.Add("Courses", "Students", "View");
     }
 
     public struct NavBarItem

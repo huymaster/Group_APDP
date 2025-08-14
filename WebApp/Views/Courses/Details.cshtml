@@ -28,4 +28,52 @@
     </div>
 </div>
 
-<div hx-get="/Courses/Enroll/@Model.CourseId" hx-target="#enroll-form" hx-swap="outerHTML" hx-trigger="load"></div>
+<div class="card mt-3">
+    <div class="card-body" id="students-card">
+        <h5 class="card-title">Student in this course</h5>
+        <div id="students-list" hx-get="@Url.Action("GetStudents", "Courses", new { courseId = Model.CourseId })"
+             hx-trigger="load" hx-target="#students-list" hx-swap="outerHTML">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="removeStudentModal" class="modal fade" tabindex="-1" aria-labelledby="removeStudentModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="removeStudentModalLabel">Remove student from course?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to remove student from course?
+            </div>
+            <div class="modal-footer">
+                <form asp-action="RemoveFromCourse" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="studentId" id="studentIdToDelete"/>
+                    <input type="hidden" name="courseId" value="@Model.CourseId"/>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            const modal = $("#removeStudentModal");
+            modal.on("show.bs.modal", function (event) {
+                const button = $(event.relatedTarget);
+                $("#studentIdToDelete").val(button.data("student-id"))
+            });
+        });
+    </script>
+}

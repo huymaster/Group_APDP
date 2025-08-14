@@ -1,0 +1,43 @@
+﻿@model Course?
+
+@{
+    ViewData["Title"] = "Enroll";
+}
+
+<h2>@ViewData["Title"]</h2>
+<hr/>
+
+@if (Model == null)
+{
+    <p class="text-danger">Course not found!</p>
+}
+else
+{
+    <h4>Enroll in @Model.CourseName</h4>
+
+    @using (Html.BeginForm("AssignStudent", "Enrollments", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.CourseId)
+        @Html.Hidden("ReturnUrl", ViewData["ReturnUrl"])
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group mb-3">
+            @Html.Label("StudentId", "Student", new { @class = "control-label" })
+            @Html.DropDownList("StudentId", (SelectList)ViewBag.Students, new { @class = "form-control" })
+            @Html.ValidationMessage("StudentId", "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            <input type="submit" value="Enroll" class="btn btn-primary"/>
+            @if (ViewData["ReturnUrl"] != null)
+            {
+                <a href="@ViewData["ReturnUrl"]" class="btn btn-secondary">Cancel</a>
+            }
+            else
+            {
+                <a asp-action="Index" asp-controller="Courses" class="btn btn-secondary">Cancel</a>
+            }
+        </div>
+    }
+}

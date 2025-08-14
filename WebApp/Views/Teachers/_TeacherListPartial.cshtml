@@ -1,0 +1,23 @@
+﻿@using X.PagedList.Mvc.Core
+@model X.PagedList.IPagedList<User>
+
+<ul class="list-group">
+    @foreach (var user in Model)
+    {
+        @await Html.PartialAsync("_TeacherCard", user)
+    }
+</ul>
+
+@Html.PagedListPager(Model, page => Url.Action("Index", "Teachers", new { page }), new PagedListRenderOptions
+{
+    LiElementClasses = ["page-item m-1"],
+    PageClasses = ["page-link"],
+    DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+    DisplayLinkToLastPage = PagedListDisplayMode.Always,
+    DisplayLinkToNextPage = PagedListDisplayMode.Always,
+    DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+    Display = PagedListDisplayMode.IfNeeded,
+    ContainerDivClasses = ["pagination justify-content-center"],
+    UlElementClasses = ["pagination", "justify-content-center", "mt-3"],
+    MaximumPageNumbersToDisplay = 5
+})

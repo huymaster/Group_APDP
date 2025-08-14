@@ -1,0 +1,44 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+@using WebApp.Core
+@model User
+@inject IAuthorizationService auth
+@inject UserManager<User> UserManager
+
+@{
+    ViewBag.IsTeacher = await UserManager.IsInRoleAsync(Model, nameof(Role.Teacher));
+    ViewBag.CanManage = (await auth.AuthorizeAsync(User, Policies.CanAssignTeachers)).Succeeded;
+}
+
+
+
+<div class="card mb-3">
+    <div class="card-body d-flex align-items-center">
+        <div
+            class="mr-3 d-inline-flex flex-column flex-grow-1 align-items-start justify-content-start rounded-circle">
+            @if (ViewBag.IsTeacher)
+            {
+                <h5 class="card-title">@Model.FullName</h5>
+                <p class="mt-1 mb-0">@Model.UserName</p>
+            }
+        </div>
+        @if (ViewBag.CanManage)
+        {
+            <div class="d-inline-flex flex-column">
+                <a class="btn btn-primary m-1" asp-controller="Teachers" asp-action="Edit"
+                   asp-route-id="@Model.Id">
+                    Edit
+                </a>
+                <button class="btn btn-danger m-1"
+                        data-bs-toggle="modal"
+                        data-bs-target="#deleteTeacherModal"
+                        data-id="@Model.Id">
+                    Delete
+                </button>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+</script>

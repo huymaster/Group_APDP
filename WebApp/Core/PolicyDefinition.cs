@@ -23,7 +23,8 @@ public static class PolicyDefinition
         options.AddPolicy(Policies.CanManageRoles, policy => policy.RequireRole(ROLE_MANAGER));
         options.AddPolicy(Policies.CanAssignTeachers, policy => policy.RequireRole(ROLE_MANAGER));
         options.AddPolicy(Policies.CanManageCourses, policy => policy.RequireRole(ROLE_MANAGER));
-        options.AddPolicy(Policies.CanViewCourses, policy => policy.RequireRole(ROLE_MANAGER, ROLE_TEACHER));
+        options.AddPolicy(Policies.CanViewCourses,
+            policy => policy.RequireRole(ROLE_MANAGER, ROLE_TEACHER, ROLE_STUDENT));
         options.AddPolicy(Policies.CanAssignStudents, policy => policy.RequireRole(ROLE_MANAGER, ROLE_TEACHER));
     }
 }

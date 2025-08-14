@@ -37,4 +37,9 @@
         <_ContentIncludedByDefault Remove="Views\Account\Login.cshtml"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <AdditionalFiles Include="Views\Teachers\Edit.cshtml"/>
+        <AdditionalFiles Include="Views\Teachers\Index.cshtml"/>
+    </ItemGroup>
+
 </Project>

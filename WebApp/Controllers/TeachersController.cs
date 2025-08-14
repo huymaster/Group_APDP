@@ -12,60 +12,32 @@ using X.PagedList.Extensions;
 
 namespace WebApp.Controllers;
 
-public class StudentsController(
+public class TeachersController(
     ApplicationIdentityDbContext context,
     UserManager<User> userManager,
-    ILogger<StudentsController> logger
+    ILogger<TeachersController> logger
 ) : Controller
 {
-    [Authorize(Policy = Policies.CanManageStudents)]
+    [Authorize(Policy = Policies.CanManageTeachers)]
     public async Task<IActionResult> Index(int? page)
     {
-        var paged = await GetStudents(page);
+        var paged = await GetTeachers(page);
         return View(paged);
-    }
-
-    [Authorize(Policy = Policies.CanViewCourses)]
-    public async Task<IActionResult> View(int? page)
-    {
-        var user = await userManager.GetUserAsync(User);
-        if (user == null)
-            return NotFound();
-        var allCourses = await context.AssignedUsers
-            .Where(c => c.UserId == user.Id)
-            .Include(c => c.Course)
-            .Include(c => c.Course.Teacher)
-            .Include(c => c.User)
-            .Select(c => c.Course)
-            .ToListAsync();
-
-        const int pageSize = 10;
-        var pageNumber = Math.Min(1, allCourses.Count / pageSize);
-
-        var currentPage = page ?? 1;
-        if (currentPage > pageNumber)
-            currentPage = pageNumber;
-        if (currentPage < 1)
-            currentPage = 1;
-
-        var paged = allCourses.ToPagedList(currentPage, pageSize);
-
-        return View("View", paged);
     }
 
     [HttpGet]
     [ValidateAntiForgeryToken]
-    [Authorize(Policy = Policies.CanManageStudents)]
-    public async Task<IPagedList<User>> GetStudents(int? page)
+    [Authorize(Policy = Policies.CanManageTeachers)]
+    public async Task<IPagedList<User>> GetTeachers(int? page)
     {
         var users = context.Users.ToList();
-        List<User> students = [];
+        List<User> teachers = [];
         foreach (var user in users)
-            if (await userManager.IsInRoleAsync(user, nameof(Role.Student)))
-                students.Add(user);
+            if (await userManager.IsInRoleAsync(user, nameof(Role.Teacher)))
+                teachers.Add(user);
 
         const int pageSize = 10;
-        var pageNumber = Math.Min(1, students.Count / pageSize);
+        var pageNumber = Math.Min(1, teachers.Count / pageSize);
 
         var currentPage = page ?? 1;
         if (currentPage > pageNumber)
@@ -73,35 +45,30 @@ public class StudentsController(
         if (currentPage < 1)
             currentPage = 1;
 
-        return students.ToPagedList(currentPage, pageSize);
+        return teachers.ToPagedList(currentPage, pageSize);
     }
 
     [HttpGet]
-    [Authorize(Policy = Policies.CanManageStudents)]
+    [Authorize(Policy = Policies.CanManageTeachers)]
     public IActionResult Add()
     {
-        return View("AddStudent", Activator.CreateInstance<User>());
+        return View("AddTeacher", Activator.CreateInstance<User>());
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Policy = Policies.CanManageStudents)]
+    [Authorize(Policy = Policies.CanManageTeachers)]
     public async Task<IActionResult> Add(
-        [Bind("FullName", "StudentCode", "Email", "PhoneNumber", "BirthDate")]
+        [Bind("FullName", "Email", "PhoneNumber", "BirthDate")]
         User user
     )
     {
-        if (string.IsNullOrEmpty(user.StudentCode))
-            ModelState.AddModelError(nameof(user.StudentCode), "Student code is required.");
-        else if (await context.Users.AnyAsync(u => u.StudentCode == user.StudentCode))
-            ModelState.AddModelError(nameof(user.StudentCode), "Student code already exists.");
-
         validatePhoneNumber(user.PhoneNumber, ModelState, nameof(user.PhoneNumber));
         validateEmail(user.Email, ModelState, nameof(user.Email));
         if (string.IsNullOrEmpty(user.FullName))
             ModelState.AddModelError(nameof(user.FullName), "Full name is required.");
         if (!ModelState.IsValid)
-            return View("AddStudent", user);
+            return View("AddTeacher", user);
 
         user.UserName = user.Email;
         user.NormalizedEmail = user.Email.ToUpper();
@@ -109,23 +76,24 @@ public class StudentsController(
         var result = await userManager.CreateAsync(user, "P@ssw0rd123");
         if (result.Succeeded)
         {
+            await userManager.AddToRoleAsync(user, nameof(Role.Teacher));
             user.EmailConfirmed = true;
             user.LockoutEnabled = true;
             await context.SaveChangesAsync();
-            await userManager.AddToRoleAsync(user, nameof(Role.Student));
             return RedirectToAction(nameof(Index));
         }
 
         foreach (var error in result.Errors)
             ModelState.AddModelError(string.Empty, error.Description);
         ModelState.AddModelError(string.Empty, "Unknown error occurred.");
-        return View("AddStudent", user);
+        return View("AddTeacher", user);
     }
 
     private void validatePhoneNumber(string? PhoneNumber, ModelStateDictionary model, string key)
     {
         if (string.IsNullOrEmpty(PhoneNumber))
         {
+            model.AddModelError(key, "Phone number is required.");
             return;
         }
 
@@ -148,7 +116,7 @@ public class StudentsController(
     }
 
     [HttpGet]
-    [Authorize(Policy = Policies.CanManageStudents)]
+    [Authorize(Policy = Policies.CanManageTeachers)]
     public async Task<IActionResult> Edit(string? id)
     {
         logger.LogInformation("Editing user {user}", id);
@@ -164,10 +132,10 @@ public class StudentsController(
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Policy = Policies.CanManageStudents)]
+    [Authorize(Policy = Policies.CanManageTeachers)]
     public async Task<IActionResult> Edit(
         string id,
-        [Bind("StudentCode", "FullName", "Email", "PhoneNumber", "BirthDate")]
+        [Bind("FullName", "Email", "PhoneNumber", "BirthDate")]
         User modUser
     )
     {
@@ -179,11 +147,6 @@ public class StudentsController(
         if (user == null)
             return NotFound();
 
-        if (string.IsNullOrEmpty(modUser.StudentCode))
-            ModelState.AddModelError(nameof(modUser.StudentCode), "Student code is required.");
-        else if (await context.Users.AnyAsync(u => u.StudentCode == modUser.StudentCode && u.Id != user.Id))
-            ModelState.AddModelError(nameof(modUser.StudentCode), "Student code already exists.");
-
         validatePhoneNumber(modUser.PhoneNumber, ModelState, nameof(modUser.PhoneNumber));
         validateEmail(modUser.Email, ModelState, nameof(modUser.Email));
         if (string.IsNullOrEmpty(modUser.FullName))
@@ -193,11 +156,6 @@ public class StudentsController(
 
         if (modUser.FullName != user.FullName)
             user.FullName = modUser.FullName;
-
-        if (await context.Users.AnyAsync(u => u.StudentCode == modUser.StudentCode))
-            ModelState.AddModelError(nameof(modUser.StudentCode), "Student code already exists.");
-        else if (!string.Equals(modUser.StudentCode, user.StudentCode, StringComparison.OrdinalIgnoreCase))
-            user.StudentCode = modUser.StudentCode?.ToUpper() ?? "";
 
         if (modUser.NormalizedEmail != user.NormalizedEmail)
         {
@@ -230,7 +188,7 @@ public class StudentsController(
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Policy = Policies.CanManageStudents)]
+    [Authorize(Policy = Policies.CanManageTeachers)]
     public async Task<IActionResult> Delete(string? id)
     {
         if (string.IsNullOrEmpty(id))

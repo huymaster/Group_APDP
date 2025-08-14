@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 
 namespace WebApp.Models;
@@ -16,5 +15,5 @@ public class User : IdentityUser
 
     [Display(Name = "Date Of Birth")] public DateOnly BirthDate { get; set; }
 
-    [NotMapped] public ICollection<AssignedUser> AssignedUsers { get; set; } = new List<AssignedUser>();
+    public ICollection<AssignedUser> AssignedUsers { get; set; } = new List<AssignedUser>();
 }
