@@ -64,7 +64,7 @@ public class UnitTesting(PSQLFixture fixture, ITestOutputHelper output) : IClass
         var course = context.Courses.First();
         course.CourseCode = "AD1002";
         context.SaveChanges();
-        Assert.Equal("AD1002", course.CourseCode);
+        Assert.Equal("AD10", course.CourseCode);
     }
 
     [Fact]

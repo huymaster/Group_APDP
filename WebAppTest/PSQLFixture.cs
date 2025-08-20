@@ -1,7 +1,4 @@
 ﻿using System.Security;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Testcontainers.PostgreSql;
 using WebApp.Data;
 
 namespace WebAppTest;
@@ -10,7 +7,6 @@ public class PSQLFixture : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _container = new PostgreSqlBuilder()
         .WithImage("postgres:latest")
-        .WithName("testdb")
         .WithUsername("admin")
         .WithPassword("0")
         .WithPortBinding(54432, 5432)
@@ -33,6 +29,7 @@ public class PSQLFixture : IAsyncLifetime
 
     public Task DisposeAsync()
     {
+        _container.DisposeAsync();
         return Task.CompletedTask;
     }
 

@@ -19,10 +19,18 @@
                 <td>@student.StudentCode</td>
                 <td>@student.FullName</td>
                 <td>
-                    <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#removeStudentModal"
-                            data-student-id="@student.Id">
-                        Delete
-                    </button>
+                    <div class="bin btn-group">
+                        <a class="btn btn-sm btn-primary me-1" asp-controller="Students" asp-action="Edit"
+                           asp-route-id="@student.Id"
+                           asp-route-redirectUrl="@Url.Action("Details", "Courses", new { id = ViewData["CourseId"] })">
+                            Edit
+                        </a>
+                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                                data-bs-target="#removeStudentModal"
+                                data-student-id="@student.Id">
+                            Delete
+                        </button>
+                    </div>
                 </td>
             </tr>
         }

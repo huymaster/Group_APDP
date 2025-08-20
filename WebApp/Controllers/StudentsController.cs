@@ -124,10 +124,7 @@ public class StudentsController(
 
     private void validatePhoneNumber(string? PhoneNumber, ModelStateDictionary model, string key)
     {
-        if (string.IsNullOrEmpty(PhoneNumber))
-        {
-            return;
-        }
+        if (string.IsNullOrEmpty(PhoneNumber)) return;
 
         var pattern = "^0[0-9]{9}$";
         if (!Regex.IsMatch(PhoneNumber, pattern))
@@ -149,7 +146,7 @@ public class StudentsController(
 
     [HttpGet]
     [Authorize(Policy = Policies.CanManageStudents)]
-    public async Task<IActionResult> Edit(string? id)
+    public async Task<IActionResult> Edit(string? id, string? redirectUrl)
     {
         logger.LogInformation("Editing user {user}", id);
         if (string.IsNullOrEmpty(id))
@@ -159,6 +156,8 @@ public class StudentsController(
         if (user == null)
             return NotFound();
 
+        if (redirectUrl != null)
+            ViewData["RedirectUrl"] = redirectUrl;
         return View(user);
     }
 
@@ -167,6 +166,7 @@ public class StudentsController(
     [Authorize(Policy = Policies.CanManageStudents)]
     public async Task<IActionResult> Edit(
         string id,
+        [Bind("RedirectUrl")] string? redirectUrl,
         [Bind("StudentCode", "FullName", "Email", "PhoneNumber", "BirthDate")]
         User modUser
     )
@@ -220,7 +220,10 @@ public class StudentsController(
 
         var result = await userManager.UpdateAsync(user);
         if (result.Succeeded)
-            return RedirectToAction(nameof(Index));
+            if (string.IsNullOrEmpty(redirectUrl))
+                return RedirectToAction(nameof(Index));
+            else
+                return Redirect(redirectUrl);
 
         foreach (var error in result.Errors)
             ModelState.AddModelError(string.Empty, error.Description);

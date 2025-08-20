@@ -39,7 +39,6 @@ public class CoursesController(
         return View();
     }
 
-    // Details
     [Authorize(Policy = Policies.CanViewCourses)]
     public async Task<IActionResult> Details(string? id)
     {

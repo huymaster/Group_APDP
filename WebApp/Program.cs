@@ -1,5 +1,4 @@
 using System.IO.Compression;
-using System.Net;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -69,18 +68,12 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     var thumbprint = builder.Configuration["Kestrel:Certificates:Default:Thumbprint"];
     var cert = Certificate.GetCertificate(thumbprint);
 
-    serverOptions.Listen(IPAddress.Any, 80);
-    serverOptions.Listen(IPAddress.IPv6Any, 80);
+    serverOptions.ListenAnyIP(80);
 
     if (cert != null)
-    {
-        serverOptions.Listen(IPAddress.Any, 443, listenOptions => listenOptions.UseHttps(cert));
-        serverOptions.Listen(IPAddress.IPv6Any, 443, listenOptions => listenOptions.UseHttps(cert));
-    }
+        serverOptions.ListenAnyIP(443, listenOptions => listenOptions.UseHttps(cert));
     else
-    {
         Console.WriteLine("No certificate found. HTTPS will not be enabled.");
-    }
 });
 
 var app = builder.Build();
@@ -100,7 +93,7 @@ await using (var scope = app.Services.CreateAsyncScope())
 app.MapHealthChecks("/ServerHealth");
 
 app.UseResponseCompression();
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 if (!app.Environment.IsDevelopment())
